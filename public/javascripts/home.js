@@ -11,9 +11,10 @@ var flag = 0;
 var storys = document.querySelector(".story-section");
 var checkFile = (id) => {
   var selected_inp = document.getElementById(id);
-  console.log(selected_inp)
+  console.log(selected_inp.files.length);
+  // console.log(selected_inp[0]?.files?.length);
 
-  if (!selected_inp.length || !selected_inp[0].files.length) {
+  if (!selected_inp.files.length ) {
     toastr.error("Please select a file.");
     return false;
   }
@@ -27,9 +28,9 @@ var checkFile = (id) => {
     "video/quicktime",
   ];
 
-  if (!allowedMimeTypes.includes(selected_inp[0].files[0].type)) {
+  if (!allowedMimeTypes.includes(selected_inp[0]?.files[0]?.type)) {
     toastr.error("Please select a valid file type.");
-    selected_inp.val("");
+    selected_inp.value="";
     return false;
   }
 
