@@ -36,6 +36,39 @@
       secondsElapsed / ranges[key]; return formatter.format(Math.round(delta),
       key); } } } %>    
     <div class="main">
+      <div class="post-menu">
+        <div class="upload-form2">
+          <div class="menu-container">
+            <button style="color: #ED4956;" class="menu-items">
+              <b>Report</b>
+            </button>
+            <button style="color: #ED4956;" class="menu-items">
+              <b>Unfollow</b>
+            </button>
+            <button style="color: #ED4956;" class="menu-items delete">
+              <b>Delete</b>
+            </button>
+            <button class="menu-items goto">
+              Go to post
+            </button>
+            <button class="menu-items shareTo">
+              Share to...
+            </button>
+            <button class="menu-items copy">
+              Copy link
+            </button>
+            <button class="menu-items">
+              Add To favourites
+            </button>
+            <button class="menu-items about-account">
+              About this account
+            </button>
+            <button class="menu-items cancel">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
       <div class="share-overlay">
         <div class="upload-form2">
           <div id="popup-container">
@@ -74,7 +107,7 @@
           class="upload-form"
           method="post"
           enctype="multipart/form-data"
-          
+          onsubmit="return checkFile('file_inp-story')"
         >
           <div class="main-nav">
             <h3>Create Story</h3>
@@ -135,9 +168,9 @@
         <% noti.reverse().forEach((i)=>{%> <% if(i.notificationType == "like"){
         %>
         <div class="notification-list">
-          <a href="/singlepost/<%= i.entityId %>" class="notification-item">
+          <a href="/singlepost/<%=i.entityId %>" class="notification-item">
             <div class="user-avatar">
-              <img src="<%= i.userFrom.profile_picture %>" alt="User Avatar" />
+              <img src="<%=i.userFrom.profile_picture %>" alt="User Avatar" />
             </div>
             <div class="notification-content">
               <p>
@@ -181,7 +214,7 @@
           class="upload-form"
           method="post"
           enctype="multipart/form-data"
-          
+          onsubmit="return checkFile('file_inp')"
         >
           <div class="main-nav-post ">
             <h3>Create Post</h3>

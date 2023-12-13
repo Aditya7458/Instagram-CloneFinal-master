@@ -12,8 +12,9 @@ const qr = require("qrcode");
 const storyModel = require("../routes/story");
 const mailer = require("../nodemailer");
 const crypto = require("crypto");
-const { log } = require("console");
 const Notification = require("./notificationModel");
+const clip= require("copy-paste")
+// import clipboardy from "clipboardy"
 // passport email setup
 passport.use(
   new loacalStrategy(
@@ -65,7 +66,6 @@ router.get("/", async function (req, res, next) {
     var noti = await Notification.find({ userTo: req.user._id })
       .populate("userTo")
       .populate("userFrom")
-      .populate("entityId")
       .sort({ CreatedAt: -1 });
     // console.log(noti);
     res.render("home", {
@@ -110,7 +110,12 @@ router.get("/username/:name", isLoggedIn, async function (req, res, next) {
   // console.log(foundUser);
   res.json({ foundUser: foundUser });
 });
-
+// cpy link
+router.get("/cpy-link/:postId", isLoggedIn, async function (req, res, next) {
+  var linkToCopy=`http://localhost:3000/singlepost/${req.params.postId}`
+  clip.copy(linkToCopy)
+  res.json({success:true})
+});
 // single post
 router.get("/singlepost/:id", isLoggedIn, async function (req, res, next) {
   const post = await postSchema.findOne({ _id: req.params.id }).populate([

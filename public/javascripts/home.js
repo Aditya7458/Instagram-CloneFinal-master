@@ -14,7 +14,7 @@ var checkFile = (id) => {
   console.log(selected_inp.files.length);
   // console.log(selected_inp[0]?.files?.length);
 
-  if (!selected_inp.files.length ) {
+  if (!selected_inp.files.length) {
     toastr.error("Please select a file.");
     return false;
   }
@@ -23,17 +23,17 @@ var checkFile = (id) => {
     "image/jpeg",
     "image/jpg",
     "image/png",
+    "image/avif",
     "video/mp4",
     "video/mpeg",
     "video/quicktime",
   ];
-
-  if (!allowedMimeTypes.includes(selected_inp[0]?.files[0]?.type)) {
+  // console.log(selected_inp?.files[0].type)
+  if (!allowedMimeTypes.includes(selected_inp?.files[0]?.type)) {
     toastr.error("Please select a valid file type.");
-    selected_inp.value="";
+    selected_inp.value = "";
     return false;
   }
-
   return true;
 };
 // cross post button overlay
@@ -107,7 +107,7 @@ function timeAgo(input) {
 
 const handle = (data, user) => {
   temp = "";
-  data.reverse().forEach((e, index) => {
+  data.reverse().forEach((e) => {
     // console.log(like[index]);
     temp += `<div  class="post-main" >
               <div class="post-header">
@@ -125,7 +125,7 @@ const handle = (data, user) => {
                     } </span
                   >
                 </div>
-                <i class="fa-solid fa-grip-lines"></i>
+                <i class="fa-solid fa-grip-lines" id="${e._id}"></i>
               </div>
               <div class="post-main-image">
                 ${
@@ -230,6 +230,60 @@ post_area.addEventListener("click", async (e) => {
     likeHandler(e.target.id);
   } else if (e.target.classList.contains("fa-bookmark")) {
     handdleBookmark(e.target.id);
+  } else if (e.target.classList.contains("fa-grip-lines")) {
+    document.querySelector(".post-menu").style.display = "block";
+    var postId = e.target.id;
+    document.querySelector(".goto").addEventListener("click", () => {
+      window.location.href = `/singlepost/${postId}`;
+    });
+    document.querySelector(".shareTo").addEventListener("click", async () => {
+      document.querySelector(".post-menu").style.display = "none";
+      document.querySelector(".share-btn").style.display = "block";
+      const res = await axios.get(`/shareqr/${postId}`);
+      document.querySelector(
+        ".whatsapp-a"
+      ).href = `http://web.whatsapp.com/send?text=http://localhost:3000/singlepost/${postId}`;
+      document
+        .querySelector(".ri-qr-scan-2-line")
+        .addEventListener("click", (e) => {
+          document.querySelector(".share-btn").style.display = "none";
+          document.querySelector(".qrimg").src = `${res.data.qrCode}`;
+          document.querySelector(".share-menu").style.display = "block";
+        });
+      document.querySelector(".msg-share").addEventListener("click", (e) => {
+        document.querySelector(".share-btn").style.display = "none";
+        document.querySelector(".share-overlay").style.display = "block";
+      });
+      document
+        .querySelector("#popup-container")
+        .addEventListener("click", async (e) => {
+          if (e.target.classList.contains("send-button")) {
+            receiver_id = e.target.id;
+            const res = await axios.get(
+              `/share-chat-msg/${receiver_id}/${postId}`
+            );
+            console.log(res.data.data.receiver_id.fullName);
+            if (res.data.success) {
+              closePopup();
+              toastr.success(
+                `Post Sent to ${res.data.data.receiver_id.fullName}`
+              );
+            }
+          }
+        });
+    });
+    document.querySelector(".copy").addEventListener("click", async (e) => {
+      const res = await axios.get(`/cpy-link/${postId}`);
+      if (res.data.success) {
+        toastr.success("link copied to clipboard");
+         document.querySelector(".post-menu").style.display = "none";
+      }
+    });
+    document.querySelector(".about-account").addEventListener("click", async(e)=>{
+      const res= await axios.get(`/post/${postId}`)
+      // console.log(res.data);
+      window.location.href = `/profile/${res.data.post.author._id}`
+    });
   } else if (e.target.classList.contains("fa-paper-plane")) {
     // console.log(e.target.id);
     shareHandler(e.target.id);
@@ -710,3 +764,13 @@ function closePopup() {
   var popupContainer = document.querySelector(".share-overlay");
   popupContainer.style.display = "none";
 }
+// post menu overlay
+document.querySelector(".post-menu").addEventListener("click", (e) => {
+  if (
+    e.target.classList.contains("post-menu") ||
+    e.target.classList.contains("cancel")
+  ) {
+    document.querySelector(".post-menu").style.display = "none";
+    document.querySelector(".post-menu").style.transition = "all ease .5s";
+  }
+});

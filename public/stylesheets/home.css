@@ -1438,3 +1438,53 @@ a{
   width: 200px;
 
 }
+/* post menu overlay */
+.post-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background-color: rgba(0, 0, 0, 0.414);
+  display: none;
+  z-index: 11;
+  overflow-y: scroll;
+}
+.menu-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #FFFFFF;
+  /* padding: 20px; */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  z-index: 1000;
+  width: 392px;
+  height: 432px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  /* overflow: scroll; */
+  box-sizing: border-box;
+  vertical-align: baseline;
+  justify-content: center;
+  gap: 8px;
+}
+.menu-items{
+  min-height: 41px;
+  background-color: transparent;
+  border-bottom: 0;
+  border-left: 0;
+  border-right: 0;
+  border-top: 1px solid #ddd;
+  /* border-top: 1px solid rgb(var(--ig-elevated-separator)); */
+  cursor: pointer;
+  font-size: 14px;
+  /* line-height: 1.5; */
+  /* margin: 0; */
+  /* min-height: 48px; */
+  /* padding: 4px 8px; */
+  text-align: center;
+  vertical-align: middle; 
+}
