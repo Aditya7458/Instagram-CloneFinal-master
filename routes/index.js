@@ -377,11 +377,31 @@ router.get("/story", isLoggedIn, async (req, res, next) => {
 router.get("/story/:id", isLoggedIn, async (req, res) => {
   const user = await userSchema.findById(req.params.id).populate({
     path: "stories",
+    populate: {
+      path:"views"
+    }
   });
   // console.log(user);
   res.json({ user: user });
 });
-
+// deleteStory
+router.get("/deletestory/:id", isLoggedIn, async (req, res, next) => {
+  const user = await userSchema.findById(req.user._id);
+  await storyModel.findByIdAndDelete(req.params.id);
+  user.stories.pull(req.params.id);
+  await user.save();
+  res.redirect("/");
+});
+// story views
+router.get("/viewstory/:id", isLoggedIn, async (req, res) => {
+  const story = await storyModel.findById(req.params.id);
+  if (story.views.includes(req.user._id)) return res.json({ story: story });
+  if (story.author.toString() !== req.user._id.toString()) {
+    story.views.push(req.user._id);
+    await story.save();
+  }
+  res.json({ story: story });
+});
 // deletecomment
 router.get("/deletecomment/:postid/:cmtid", isLoggedIn, async (req, res) => {
   const post = await postSchema.findById(req.params.postid);
@@ -462,23 +482,28 @@ router.post("/delete-chat", async function (req, res, next) {
 
 // comment
 router.post("/comment/:id", isLoggedIn, async (req, res) => {
-  const post = await postSchema.findById(req.params.id);
-  const { comment } = req.body;
-  const cmt = await commentModel.create({
-    author: req.user._id,
-    comment: comment,
-    post: req.params.id,
-  });
-  post.comments.push(cmt._id);
-  await Notification.insertNotification(
-    post.author,
-    req.user._id,
-    "comment",
-    post._id
-  );
-  await post.save();
-  res.redirect(req.header("referer"));
-});
+  try {
+    const post = await postSchema.findById(req.params.id);
+    const { comment } = req.body;
+    const cmt = await commentModel.create({
+      author: req.user._id,
+      comment: comment,
+      post: req.params.id,
+    });
+    post.comments.push(cmt._id);
+    await Notification.insertNotification(
+      post.author,
+      req.user._id,
+      "comment",
+      post._id
+    );
+    await post.save();
+    res.status(200).send({ success: true });
+  } catch (error) {
+    console.error("Error creating comment:", error);
+    res.status(500).send({ success: false, error: "Internal Server Error" });
+  }
+});   
 //upload story
 router.post(
   "/uploadstory",

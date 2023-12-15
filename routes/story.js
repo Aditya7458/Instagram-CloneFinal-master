@@ -11,6 +11,7 @@ const StorySchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    views: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   },
   { expires: 20 } // Set expires to 20 seconds for TTL
 );

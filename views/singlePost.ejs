@@ -13,7 +13,9 @@
   <body>
     <div class="main">
       <div class="nav">
-        <a href="javascript: history.go(-1)"><i class="ri-arrow-left-line"></i></a>
+        <a href="javascript: history.go(-1)"
+          ><i class="ri-arrow-left-line"></i
+        ></a>
       </div>
       <div class="reel-container"></div>
     </div>
@@ -132,12 +134,14 @@
               <strong>${comment.author.fullName}:</strong>
               ${comment.comment}
               ${
-                comment.author._id.toString() == user?._id.toString()|| user._id.toString() == post.author._id.toString()
-                  ? `<a class="dlt-cmt" href="/deletecomment/${post._id}/${comment._id}">
-                    <i class="ri-delete-bin-line"></i>
-                    </a>`: ``
+                comment.author._id.toString() == user?._id.toString() ||
+                user._id.toString() == post.author._id.toString()
+                  ? `<button class="dlt-cmt" data-post-id="${post._id}" data-comment-id="${comment._id}">Delete</button>`
+                  : ``
               }
-              <h6>${ timeAgo(comment.time) ? timeAgo(comment.time) : "1 second ago"}</h6>
+              <h6>${
+                timeAgo(comment.time) ? timeAgo(comment.time) : "1 second ago"
+              }</h6>
             </div>
           </div>
         `
@@ -171,38 +175,16 @@
             const res = await axios.get(`/like/${single_post}`);
             loadPosts();
             // handle(res.data.post);
-          } else if (e.target.classList.contains("comment")) {
-            // console.log(e.target.id);
-            // const res = await axios.get(`/post/${e.target.id}`);
-            // // console.log(res.data.post.comments);
-            // let html;
-            // document.querySelector(".reel-container").innerHTML+=`
-            //             <form action="/comment/${res.data.post._id}" method="POST">
-            //               <input name="comment" placeholder="Add comment" required></input>
-            //               <button type="submit">Comment</button>
-            //             </form>`
-            // if (res.data.post.comments.length > 0) {
-            //   const commentsHtml = res.data.post.comments
-            //     .map(
-            //       (comment) => `
-            //         <a href="/profile/${comment.author._id}">
-            //           <div class="reel-img">
-            //             <img src="${comment.author.profile_picture}" alt="">
-            //           </div>
-            //           <h4>${comment.author.fullName}</h4>
-            //         </a>
-            //         <h4>${comment.comment}</h4>
-            //         <h5><a href="/deletecomment/${res.data.post._id}/${comment._id}">❌</a></h5>
-            //       `
-            //     )
-            //     .join("");
-            //   html = `<div class="comments">${commentsHtml}</div>`;
-            // } else {
-            //   html = `<div class="comments">
-            //             <h5>No comments</h5>
-            //           </div>`;
-            // }
-            // document.querySelector(".reel-container").innerHTML += html;
+          } else if (e.target.classList.contains("dlt-cmt")) {
+            const postId = e.target.getAttribute("data-post-id");
+            const commentId = e.target.getAttribute("data-comment-id");
+
+            try {
+              await deleteComment(postId, commentId);
+              loadPosts();
+            } catch (error) {
+              console.error("Error deleting comment:", error);
+            }
           } else if (
             e.target.classList.contains("ri-bookmark-line") ||
             e.target.classList.contains("ri-bookmark-fill")
@@ -212,6 +194,40 @@
             loadPosts();
           }
         });
+      document
+        .querySelector(".reel-container")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          if (e.target.classList.contains("comment-footer")) {
+            const commentInput = e.target.querySelector("#comment");
+            const commentText = commentInput.value.trim();
+
+            if (commentText !== "") {
+              try {
+                const postId = e.target
+                  .getAttribute("action")
+                  .split("/comment/")[1];
+                await axios.post(`/comment/${postId}`, {
+                  comment: commentText,
+                });
+                commentInput.value = "";
+                loadPosts();
+              } catch (error) {
+                console.error("Error creating comment:", error);
+              }
+            }
+          }
+        });
+      async function deleteComment(postId, commentId) {
+        try {
+          const res = await axios.get(`/deletecomment/${postId}/${commentId}`);
+          console.log(res.data);
+        } catch (error) {
+          console.error("Error deleting comment:", error);
+          throw error;
+        }
+      }
     </script>
   </body>
 </html>

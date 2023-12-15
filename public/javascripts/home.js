@@ -171,6 +171,62 @@ const handle = (data, user) => {
   });
   post_area.innerHTML = temp;
 };
+async function postComment(postId) {
+  const commentForm = document.getElementById(`comment-form-${postId}`);
+  const commentInput = commentForm.querySelector("textarea");
+  const commentText = commentInput.value.trim();
+
+  if (commentText !== "") {
+    try {
+      const res = await axios.post(`/comment/${postId}`, {
+        comment: commentText,
+      });
+      console.log(res.data);
+      commentInput.value = "";
+      loadComments(postId);
+    } catch (error) {
+      console.error("Error creating comment:", error);
+    }
+  }
+}
+async function deleteComment(postId, commentId) {
+  try {
+    await axios.get(`/deletecomment/${postId}/${commentId}`);
+    loadComments(postId);
+  } catch (error) {
+    console.error("Error deleting comment:", error);
+  }
+}
+
+async function loadComments(postId) {
+  try {
+    const { data } = await axios.get(`/post/${postId}`);
+    const commentsList = document.querySelector(".comments-list");
+    commentsList.innerHTML = data.post.comments
+      .map(
+        (comment) => `<li class="comment">
+          <img class="comment-avatar" src="${
+            comment.author.profile_picture
+          }" alt="" />
+          <a class="comment-details" href="/profile/${comment.author._id}">
+            <h4 class="comment-username">${comment.author.fullName}</h4>
+            <p class="comment-text">${comment.comment}</p>
+            ${
+              comment.author._id === data.user._id ||
+              data.user._id === data.post.author._id
+                ? `<a href="javascript:void(0);" onclick="deleteComment('${data.post._id}', '${comment._id}')">
+                      <button class="delete-comment">Delete</button>
+                    </a>`
+                : ""
+            } 
+          </a>
+        </li>`
+      )
+      .join("");
+  } catch (error) {
+    console.error("Error loading comments:", error);
+  }
+}
 var qr = document.querySelector(".share-menu");
 qr.addEventListener("click", (e) => {
   if (e.target.classList.contains("share-menu")) {
@@ -276,58 +332,63 @@ post_area.addEventListener("click", async (e) => {
       const res = await axios.get(`/cpy-link/${postId}`);
       if (res.data.success) {
         toastr.success("link copied to clipboard");
-         document.querySelector(".post-menu").style.display = "none";
+        document.querySelector(".post-menu").style.display = "none";
       }
     });
-    document.querySelector(".about-account").addEventListener("click", async(e)=>{
-      const res= await axios.get(`/post/${postId}`)
-      // console.log(res.data);
-      window.location.href = `/profile/${res.data.post.author._id}`
-    });
+    document
+      .querySelector(".about-account")
+      .addEventListener("click", async (e) => {
+        const res = await axios.get(`/post/${postId}`);
+        // console.log(res.data);
+        window.location.href = `/profile/${res.data.post.author._id}`;
+      });
   } else if (e.target.classList.contains("fa-paper-plane")) {
     // console.log(e.target.id);
     shareHandler(e.target.id);
   } else if (e.target.classList.contains("comment")) {
     document.body.style.overflow = "hidden";
-    const { data } = await axios.get(`/post/${e.target.id}`);
+    const postId = e.target.id;
+    const { data } = await axios.get(`/post/${postId}`);
+    console.log(data);
     overlay2.style.display = "block";
     overlay2.innerHTML = `<div class="comment-popup-container">
-    <ul class="comments-list">
-    ${
-      data.post.comments.length === 0
-        ? `<li class="comment">
-      <div class="comment-details">
-        <h4 class="comment-username">No Comments</h4>
-      </div>
-    </li>`
-        : ""
-    }
-      ${data.post.comments.map(
-        (comment) =>
-          `<li class="comment">
-        <img class="comment-avatar" src="${
-          comment.author.profile_picture
-        }" alt="" />
-        <a class="comment-details" href="/profile/${comment.author._id}">
-          <h4 class="comment-username">${comment.author.fullName}</h4>
-          <p class="comment-text">${comment.comment}</p>
-        </a>
+      <ul class="comments-list">
         ${
-          comment.author._id === data.user._id ||
-          data.user._id === data.post.author._id
-            ? `<a href="/deletecomment/${data.post._id}/${comment._id}">
-        <button class="delete-comment">Delete</button>
-      </a>`
+          data.post.comments.length === 0
+            ? `<li class="comment">
+                <div class="comment-details">
+                  <h4 class="comment-username">No Comments</h4>
+                </div>
+              </li>`
             : ""
-        } 
-      </li>`
-      )}
-    </ul>
-    <form class="comment-form" action="/comment/${data.post._id}" method="POST">
-      <textarea name="comment" class="comment-textarea" placeholder="Write a comment..."></textarea>
-      <button class="comment-button">Post</button>
-    </form>
-  </div>`;
+        }
+        ${data.post.comments
+          .map(
+            (comment) => `<li class="comment">
+              <img class="comment-avatar" src="${
+                comment.author.profile_picture
+              }" alt="" />
+              <a class="comment-details" href="/profile/${comment.author._id}">
+                <h4 class="comment-username">${comment.author.fullName}</h4>
+                <p class="comment-text">${comment.comment}</p>
+                ${
+                  comment.author._id === data.user._id ||
+                  data.user._id === data.post.author._id
+                    ? `<a href="javascript:void(0);" onclick="deleteComment('${data.post._id}', '${comment._id}')">
+                          <button class="delete-comment">Delete</button>
+                        </a>`
+                    : ""
+                } 
+              </a>
+            </li>`
+          )
+          .join("")}
+      </ul>
+      <form class="comment-form" id="comment-form-${postId}">
+        <textarea name="comment" class="comment-textarea" placeholder="Write a comment..."></textarea>
+        <button type="button" class="comment-button" onclick="postComment('${postId}')">Post</button>
+      </form>
+    </div>`;
   }
 });
 
@@ -464,7 +525,40 @@ const startTimer = (index) => {
     videoElement.play();
   }
 };
-
+const pauseTimereye = (index) => {
+  flag = 1;
+  clearInterval(interval);
+  document.querySelector(".play_btn").classList.remove("ri-pause-fill");
+  document.querySelector(".play_btn").classList.add("ri-play-fill");
+  const videoElement = document.querySelector(".story_img");
+  if (videoElement && videoElement.tagName === "VIDEO") {
+    videoElement.pause();
+  }
+};
+const pauseTimereye2 = (index) => {
+  flag = 0;
+  interval = setInterval(() => {
+    if (time == 450) {
+      clearInterval(interval);
+      showStory(index + 1);
+    }
+    time++;
+    document.querySelector(".progress_bar").style.width = `${
+      (time / 450) * 100
+    }%`;
+  }, 10);
+  const videoElement = document.querySelector(".story_img");
+  if (videoElement && videoElement.tagName === "VIDEO") {
+    videoElement.play();
+  }
+  document.querySelector(".play_btn").classList.remove("ri-play-fill");
+  document.querySelector(".play_btn").classList.add("ri-pause-fill");
+};
+const PopClose = (index) => {
+  const viewPopup = document.getElementById("view-popup");
+  viewPopup.classList.toggle("show-popup");
+  pauseTimereye2(index);
+};
 const pauseTimer = (index) => {
   if (flag == 0) {
     clearInterval(interval);
@@ -505,11 +599,30 @@ const showStory = async (index) => {
     return;
   }
   if (story[index]) {
-    console.log(index);
+    // console.log(index);
+    var viewers = story[index].views.map((view) => {
+      return `<a href="/profile/${view._id}" class="viewer-item">
+      <div class="profile-pic">
+        <img src="${view.profile_picture}" alt="User 1" class="user-avatar" />
+      </div>
+      <span>${view.fullName}</span>
+    </a>`;
+    });
     var close = `<div class="cross-icon">
     <img src="../images/cross.png" alt="" class="cross" />
   </div>`;
     var card = `<div class="card">
+    ${
+      storyUser._id === user._id
+        ? `<a href="/deletestory/${story[index]._id}" class="delete-story-btn">
+      <i class="ri-delete-bin-fill"></i>
+    </a>
+    <div class="view-info" onclick="toggleViewPopup(${index})">
+      <i class="ri-eye-fill"></i>
+      <span class="viewer-count">${story[index].views.length}</span>
+    </div>`
+        : ""
+    }
     <div class="progress_bar_wrap">
         <div class="progress_bar" style="width:0%;"></div>
     </div>
@@ -527,8 +640,21 @@ const showStory = async (index) => {
             }</span>
         </div>
     </div>
+  </div>
+  <div class="view-popup" id="view-popup">
+    <div class="view-popup-container">
+      <div class="view-popup-header">
+        <h3>Viewers</h3>
+        <i class="ri-close-line" onclick="PopClose(${index})"></i>
+      </div>
+      <div class="view-popup-body">
+        ${viewers.length == 0 ? `<h3>No Viewers</h3>` : viewers.join("")}
+      </div>
+    </div>   
   </div>`;
+
     // console.log(story[index].filetype);
+    await axios.get(`/viewstory/${story[index]._id}`);
     var img;
     if (
       typeof story[index].filetype === "undefined" ||
@@ -539,7 +665,7 @@ const showStory = async (index) => {
       img = `<img src="/uploads/${story[index].file}" alt="" class="story_img" />`;
     }
 
-    console.log("Image Path:", story[index].file);
+    // console.log("Image Path:", story[index].file);
     var next = `<button class="next-btn" onclick="showStory(${
       index + 1
     })"> <i class="ri-arrow-right-line"></i> </button>`;
@@ -588,6 +714,21 @@ const showStory = async (index) => {
       document.body.style.overflow = "auto";
     }
   }
+};
+const toggleViewPopup = (index) => {
+  pauseTimereye(index);
+  const viewPopup = document.getElementById("view-popup");
+  viewPopup.classList.toggle("show-popup");
+  document.querySelector(".view-popup").addEventListener("click", (e) => {
+    if (
+      e.target.classList.contains("show-popup") ||
+      e.target.classList.contains("cross")
+    ) {
+      const viewPopup = document.getElementById("view-popup");
+      viewPopup.classList.toggle("show-popup");
+      pauseTimereye2(index);
+    }
+  });
 };
 overlay3.addEventListener("click", (e) => {
   if (
