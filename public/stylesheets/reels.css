@@ -272,7 +272,6 @@ body {
   background-color: rgba(0, 0, 0, 0.414);
   display: none;
   z-index: 11;
-  
 }
 .overlay2 {
   position: fixed;
@@ -321,7 +320,7 @@ body {
 .upload-nav {
   display: flex;
   height: 50%;
-  align-items:end;
+  align-items: end;
   justify-content: center;
   gap: 1rem;
   padding: 0.5rem;
@@ -352,7 +351,6 @@ body {
   /* background-color: red; */
 }
 
-
 .img-cnt {
   width: 2rem;
   height: 2rem;
@@ -364,7 +362,7 @@ img {
   width: 100%;
   display: block;
 }
-#file_inp{
+#file_inp {
   display: none;
 }
 .upload-err {
@@ -461,11 +459,11 @@ img {
   left: -600px;
   z-index: 22;
   display: flex;
-  gap: 20px;
+  gap: 10px;
   flex-direction: column;
   /* align-items: center; */
   /* justify-content: space-between; */
-  padding: 20px;
+  padding: 20px 20px 20px 10px;
   border: 0.5px solid rgba(76, 75, 75, 0.466);
   box-shadow: 2px 2px 2px #00000052;
   transition: all ease 0.2s;
@@ -473,16 +471,20 @@ img {
   border-radius: 8px;
   overflow: hidden;
 }
+.search-card h2,
+h4 {
+  margin-left: 10px;
+}
+
 .search-inp {
-  width: 100%;
   height: 35px;
-  /* background-color: #fff; */
-  border-radius: 50px;
+  border-radius: 80px;
+  padding-left: 10px;
 }
 .mdl-textfield__input {
-  width: 90%;
+  width: 94%;
   height: 100%;
-  /* border: none; */
+  outline-color: #0000007c;
   border-radius: 50px;
   display: flex;
   padding: 0 10px;
@@ -504,19 +506,28 @@ img {
 }
 .search-content a {
   display: flex;
-  /* border: .1px solid #333; */
-  border-radius: 15px;
-  width: fit-content;
-  height: 50px;
+  border-radius: 20px;
+  width: 94%;
+  /* box-shadow: 2px 2px 2px  #0000005e; */
+  -moz-box-shadow: 0 0 2px #999;
+  -webkit-box-shadow: 0 0 2px #999;
+  box-shadow: 0 0 2px #999;
   align-items: center;
-  background: #ffffff;
+  background: #fff;
   gap: 8px;
-  /* padding: 5px 20px; */
+  padding: 3px 10px 3px 10px;
+  cursor: pointer;
+}
+.search-content a:hover {
+  background-color: rgb(215, 214, 214);
+  transition: all ease .5s;
 }
 .search-img {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid #c850c0;
   overflow: hidden;
   /* background-color: #c850c0; */
 }
@@ -524,6 +535,12 @@ img {
   width: 100%;
   height: 100%;
   border-radius: 50%;
+  background-image: linear-gradient(
+    43deg,
+    #4158d0 0%,
+    #c850c0 46%,
+    #ffcc70 100%
+  );
 }
 .search-name {
   min-width: 50px;
@@ -534,14 +551,15 @@ img {
 }
 /* menu overlay */
 .menu-overlay {
-  width: 220px;
-  position: absolute;
-  height: 460px;
+  width: 240px;
+  position: fixed;
+  height: 380px;
   z-index: 80;
-  top: 80px;
+  bottom: -500px;
+  transition: all ease-in-out .2s;
   left: 10px;
   background-color: #fff;
-  display: none;
+  /* display: none; */
   flex-direction: column;
   gap: 20px;
   align-items: baseline;
@@ -628,7 +646,7 @@ a {
   cursor: pointer;
 }
 /* notification */
-.notification{
+.notification {
   width: 380px;
   height: 100vh;
   background-color: #fff;
@@ -636,32 +654,38 @@ a {
   border-radius: 10px;
   position: absolute;
   z-index: 111;
-  border: .1px solid #33333359;
+  border: 0.1px solid #33333359;
   padding: 20px;
   left: -600px;
   display: flex;
-  transition: all ease .2s;
+  transition: all ease 0.2s;
   flex-direction: column;
   gap: 10px;
   /* align-items: center; */
 }
 .notification-list {
   margin: 0px;
+  padding: 0%;
+  /* height: 100vh; */
+}
+.notification-list a:hover {
+  background-color: rgb(215, 214, 214);
+  cursor: pointer;
 }
 
 .notification-item {
   display: flex;
   align-items: center;
   background-color: #fff;
-  border-radius: 8px;
-  padding: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 15px;
+  border-radius: 20px;
+  padding: 3px 10px;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+  /* margin-bottom: 15px; */
   transition: background-color 0.3s ease-in-out;
 }
 
 .notification-item:hover {
-  background-color: #f7f7f7;
+  background-color: rgb(215, 214, 214);
 }
 
 .user-avatar {
@@ -670,12 +694,19 @@ a {
   border-radius: 50%;
   overflow: hidden;
   margin-right: 10px;
+  border: 1px solid #c850c0;
 }
 
 .user-avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  background-image: linear-gradient(
+    43deg,
+    #4158d0 0%,
+    #c850c0 46%,
+    #ffcc70 100%
+  );
 }
 
 .notification-content {
@@ -692,18 +723,18 @@ a {
   font-size: 12px;
 }
 
-.notification-list::before {
+/* .notification-list::before {
   content: "";
   display: block;
   height: 1px;
   background-color: #ddd;
-  margin-bottom: 15px;
-}
+  /* margin-bottom: 15px; */
+/* } */ 
 
-a{
+a {
   text-decoration: none;
-}  
-.active{
+}
+.active {
   font-weight: bold !important;
   background-color: rgb(215, 214, 214) !important;
 }

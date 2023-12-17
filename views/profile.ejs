@@ -111,7 +111,9 @@
             <a><i class="fa-solid fa-square-plus"></i></a>
             <a>Create</a>
           </div>
-          <div class="sub-section <%=currentRoute.startsWith('/profile')?'active':'' %>">
+          <div
+            class="sub-section <%=currentRoute.startsWith('/profile')?'active':'' %>"
+          >
             <a href="/profile/<%= loggedInUser._id %>">
               <div class="profile-img">
                 <img src="<%= loggedInUser.profile_picture %>" alt="" /></div
@@ -147,8 +149,12 @@
               >
               <% }else{ %>
               <a href="/follow/<%=followUser._id %>"><button>follow</button></a>
-              <% } %>
+              <% } %> <% if(loggedInUser._id.toString()==user._id.toString()){
+              %>
               <i class="ri-settings-2-line"></i>
+              <% }else{ %>
+                <a href="/gotochat/<%=user._id%>" class="profile_msg"><button id="<%=user._id%>">Message</button></a>
+                <% } %>
             </div>
             <div class="profile_stats">
               <h4><%= user.posts.length%>&nbsp;Posts</h4>
@@ -358,8 +364,8 @@
                 <%}%> <% }) %>
               </div>
             </div>
-           
-             <div id="Saved" class="profile__section__tab__tabcontent">
+
+            <div id="Saved" class="profile__section__tab__tabcontent">
               <div class="grid-container">
                 <% book.bookmarks.forEach(e=>{ %> <%if(e.filetype=="image"){%>
                 <a href="/singlepost/<%=e._id%>">

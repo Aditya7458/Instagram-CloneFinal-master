@@ -12,14 +12,6 @@ font-family: 'Signika', sans-serif; */
   --background-on-hover: rgb(215, 214, 214);
 }
 
-.dark-mode {
-  --background-color: rgb(15, 15, 15);
-  --font-color: rgb(254, 252, 252);
-  --secod-font-color: rgb(197, 195, 195);
-  --secondary-font-color: rgb(108, 106, 106);
-  --background-on-hover: rgba(52, 51, 51, 0.834);
-}
-
 * {
   margin: 0;
   padding: 0;
@@ -1092,7 +1084,7 @@ video {
 }
 /* story overlay */
 .overlay3 {
-  position: absolute;
+  position: fixed;
   height: 100%;
   width: 100vmax;
   background-color: rgba(0, 0, 0, 0.694);

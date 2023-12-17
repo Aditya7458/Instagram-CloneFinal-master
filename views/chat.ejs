@@ -161,6 +161,7 @@
             <% allUser.forEach(e => { %>
             <div
               class="chat-user"
+              id="<%=e._id  %>"
               data-id="<%=e._id%>"
               data-name="<%=e.fullName %>"
               data-img="<%=e.profile_picture%>"
@@ -334,6 +335,16 @@
       referrerpolicy="no-referrer"
     ></script> -->
     <script src="/socket.io/socket.io.js"></script>
+    <% if(isProfile){%>
+    <script>
+      document.addEventListener("DOMContentLoaded", (e) => {
+        var receiver = "<%=receiveViaProfile%>";
+        var specificChat = document.getElementById(receiver);
+        specificChat.click();
+      });
+    </script>
+    <% } %>
+
     <script>
       var sender_id = "<%=user._id %>";
       var receiver_id;
@@ -349,8 +360,8 @@
           element.scrollTop = element.scrollHeight;
         }, time);
       }
-
-      document
+      document.addEventListener("DOMContentLoaded",()=>{
+        document
         .querySelector(".left-chat-sec")
         .addEventListener("click", function (e) {
           updateScroll(500);
@@ -379,6 +390,7 @@
           });
         });
 
+      })
       socket.on("getOnlineUser", function (data) {
         $("#" + data.user_id + "-status").html("online");
         $("#" + data.user_id + "-status").removeClass("offline-status");
@@ -448,14 +460,14 @@
             html += `<div class="${addClass}" id="${i._id}">
               <h6>${i.message.content}
                 ${
-                  i.sender_id == sender_id ?
-                    `<i
+                  i.sender_id == sender_id
+                    ? `<i
                       class="ri-delete-bin-7-line"
                       data-id="${i._id}"
                       data-toggle="modal"
                       data-target="#deleteChatModel"
-                    ></i>`:
-                    ""
+                    ></i>`
+                    : ""
                 }
               </h6>  
             </div>
@@ -468,11 +480,9 @@
           onmouseout="pauseVideo(this)">
       <div class="${addClass} post-container" id="${i._id}">
         ${
-          postContent.filetype === "video" ?
-            `<video muted loop src="${postContent.file}"></video>`
-          : 
-            `<img src="${postContent.file}" alt="" />`
-          
+          postContent.filetype === "video"
+            ? `<video muted loop src="${postContent.file}"></video>`
+            : `<img src="${postContent.file}" alt="" />`
         }
         <div class="overlay-icons">
           ${

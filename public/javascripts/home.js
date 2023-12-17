@@ -104,7 +104,19 @@ function timeAgo(input) {
     }
   }
 }
-
+async function openStory(e) {
+  // console.log("hello")
+  const { data } = await axios.get(`/story/${e}`);
+  // console.log(res);
+  story = data.user.stories;
+  storyUser = data.user;
+  if (story.length == 0) {
+    window.location.href = `/profile/${e}`;
+    return;
+  }
+  showStory(0);
+  document.body.style.overflow = "hidden";
+}
 const handle = (data, user) => {
   temp = "";
   data.reverse().forEach((e) => {
@@ -112,7 +124,9 @@ const handle = (data, user) => {
     temp += `<div  class="post-main" >
               <div class="post-header">
                 <div class="post-left-header">  
-                  <div class="post-image">
+                  <div class="post-image"  onclick="openStory('${
+                    e.author._id
+                  }')">
                     <img src="${e.author.profile_picture}" alt="" />
                   </div>
                   <a href="/profile/${e.author._id} "
@@ -248,7 +262,6 @@ var handdleBookmark = async (e) => {
 };
 const shareHandler = async (e) => {
   const res = await axios.get(`/shareqr/${e}`);
-  // console.log(res);
   postId = e;
   document.querySelector(".share-btn").style.display = "block";
 
@@ -256,30 +269,41 @@ const shareHandler = async (e) => {
     ".whatsapp-a"
   ).href = `http://web.whatsapp.com/send?text=http://localhost:3000/singlepost/${e}`;
 
-  document
-    .querySelector(".ri-qr-scan-2-line")
-    .addEventListener("click", (e) => {
-      document.querySelector(".share-btn").style.display = "none";
-      document.querySelector(".qrimg").src = `${res.data.qrCode}`;
-      document.querySelector(".share-menu").style.display = "block";
-    });
-  document.querySelector(".msg-share").addEventListener("click", (e) => {
+  const qrScanElement = document.querySelector(".ri-qr-scan-2-line");
+  const msgShareElement = document.querySelector(".msg-share");
+  const popupContainer = document.querySelector("#popup-container");
+
+  const handleQrScanClick = () => {
+    document.querySelector(".share-btn").style.display = "none";
+    document.querySelector(".qrimg").src = `${res.data.qrCode}`;
+    document.querySelector(".share-menu").style.display = "block";
+    qrScanElement.removeEventListener("click", handleQrScanClick);
+  };
+
+  const handleMsgShareClick = () => {
     document.querySelector(".share-btn").style.display = "none";
     document.querySelector(".share-overlay").style.display = "block";
-  });
-  document
-    .querySelector("#popup-container")
-    .addEventListener("click", async (e) => {
-      if (e.target.classList.contains("send-button")) {
-        receiver_id = e.target.id;
-        const res = await axios.get(`/share-chat-msg/${receiver_id}/${postId}`);
-        console.log(res.data.data.receiver_id.fullName);
-        if (res.data.success) {
-          closePopup();
-          toastr.success(`Post Sent to ${res.data.data.receiver_id.fullName}`);
-        }
+    msgShareElement.removeEventListener("click", handleMsgShareClick);
+  };
+
+  const handleSendButtonClick = async (e) => {
+    if (e.target.classList.contains("send-button")) {
+      receiver_id = e.target.id;
+      const res = await axios.get(`/share-chat-msg/${receiver_id}/${postId}`);
+      console.log(res.data.success);
+      if (res.data.success) {
+        closePopup();
+        toastr.success(`Post Sent to ${res.data.data.receiver_id.fullName}`);
+      } else {
+        toastr.error(res.data.msg);
       }
-    });
+      popupContainer.removeEventListener("click", handleSendButtonClick);
+    }
+  };
+
+  qrScanElement.addEventListener("click", handleQrScanClick);
+  msgShareElement.addEventListener("click", handleMsgShareClick);
+  popupContainer.addEventListener("click", handleSendButtonClick);
 };
 post_area.addEventListener("click", async (e) => {
   if (e.target.classList.contains("like")) {

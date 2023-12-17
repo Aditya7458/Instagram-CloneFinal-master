@@ -186,6 +186,7 @@ document.querySelector(".swiper").addEventListener("click", (e) => {
   ) {
     document.querySelector(".search-card").style.left = "-600px";
     document.querySelector(".notification").style.left = "-600px";
+    document.querySelector(".menu-overlay").style.bottom = "-500px";
   }
 });
 document.querySelector(".search-inp").addEventListener("keydown", function (e) {
@@ -238,4 +239,8 @@ overlay.addEventListener("click", (e) => {
 });
 document.querySelector(".upload-nav").addEventListener("click", () => {
   document.querySelector("#file_inp").click();
+});
+// menu overlay
+document.querySelector(".menu-section").addEventListener("click", (e) => {
+  document.querySelector(".menu-overlay").style.bottom = "160px"
 });

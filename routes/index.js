@@ -13,7 +13,7 @@ const storyModel = require("../routes/story");
 const mailer = require("../nodemailer");
 const crypto = require("crypto");
 const Notification = require("./notificationModel");
-const clip= require("copy-paste")
+const clip = require("copy-paste");
 // import clipboardy from "clipboardy"
 // passport email setup
 passport.use(
@@ -112,9 +112,9 @@ router.get("/username/:name", isLoggedIn, async function (req, res, next) {
 });
 // cpy link
 router.get("/cpy-link/:postId", isLoggedIn, async function (req, res, next) {
-  var linkToCopy=`http://localhost:3000/singlepost/${req.params.postId}`
-  clip.copy(linkToCopy)
-  res.json({success:true})
+  var linkToCopy = `http://localhost:3000/singlepost/${req.params.postId}`;
+  clip.copy(linkToCopy);
+  res.json({ success: true });
 });
 // single post
 router.get("/singlepost/:id", isLoggedIn, async function (req, res, next) {
@@ -262,7 +262,7 @@ router.get("/shareqr/:id", isLoggedIn, async function (req, res, next) {
 router.get("/chat", isLoggedIn, async function (req, res, next) {
   const user = await userSchema.findOne({ _id: req.user._id });
   const allUser = await userSchema.find({ _id: { $ne: req.user._id } });
-  res.render("chat", { user: user, allUser: allUser });
+  res.render("chat", { user: user, allUser: allUser, isProfile: false });
 });
 
 // get signup page
@@ -378,8 +378,8 @@ router.get("/story/:id", isLoggedIn, async (req, res) => {
   const user = await userSchema.findById(req.params.id).populate({
     path: "stories",
     populate: {
-      path:"views"
-    }
+      path: "views",
+    },
   });
   // console.log(user);
   res.json({ user: user });
@@ -410,6 +410,17 @@ router.get("/deletecomment/:postid/:cmtid", isLoggedIn, async (req, res) => {
   await post.save();
   await commentModel.findByIdAndDelete(req.params.cmtid);
   res.redirect(req.header("referer"));
+});
+// goto chat via profile
+router.get("/gotochat/:id", isLoggedIn, async (req, res, next) => {
+  const user = await userSchema.findOne({ _id: req.user._id });
+  const allUser = await userSchema.find({ _id: { $ne: req.user._id } });
+  res.render("chat", {
+    isProfile: true,
+    receiveViaProfile: req.params.id,
+    user: user,
+    allUser: allUser,
+  });
 });
 // save chats
 router.post("/save-chat", async function (req, res, next) {
@@ -464,13 +475,11 @@ router.get(
         .json({ success: true, msg: "Chat Inserted", data: populatedChat });
     } catch (error) {
       console.error("Error saving chat:", error);
-      res
-        .status(500)
-        .json({
-          success: false,
-          msg: "Error saving chat",
-          error: error.message,
-        });
+      res.status(500).json({
+        success: false,
+        msg: "Error saving chat",
+        error: error.message,
+      });
     }
   }
 );
@@ -503,7 +512,7 @@ router.post("/comment/:id", isLoggedIn, async (req, res) => {
     console.error("Error creating comment:", error);
     res.status(500).send({ success: false, error: "Internal Server Error" });
   }
-});   
+});
 //upload story
 router.post(
   "/uploadstory",
