@@ -63,10 +63,23 @@ body {
   cursor: pointer;
 }
 .profile_bio {
-  max-width: 180px;
+  max-width: 260px;
+  /* background-color: #0095f6; */
   height: fit-content;
 }
-
+.profile_bio h6{
+  width: 100%;
+  width: 100%;
+    /* background-color: red; */
+    /* height: fit-content; */
+    /* display: inline; */
+    word-wrap: break-word;
+    white-space: normal;
+}
+.links{
+  all:unset;
+  cursor: pointer;
+}
 .profile_stats {
   display: flex;
   gap: 20px;

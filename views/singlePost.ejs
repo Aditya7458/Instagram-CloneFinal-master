@@ -110,7 +110,7 @@
         }
       </div>
       <div class="menu">
-        <i class="ri-more-line"></i>
+        <i class="ri-delete-bin-7-line"></i>
       </div>
       <div class="profile"></div>
     </div>
@@ -167,15 +167,24 @@
         cont.innerHTML = temp;
       };
 
-      // console.log();
-      document
-        .querySelector(".reel-container")
-        .addEventListener("click", async (e) => {
+      document.querySelector(".reel-container").addEventListener("click", async (e) => {
           if (e.target.classList.contains("heart")) {
             const res = await axios.get(`/like/${single_post}`);
             loadPosts();
-            // handle(res.data.post);
-          } else if (e.target.classList.contains("dlt-cmt")) {
+          }else if(e.target.classList.contains("ri-delete-bin-7-line")){
+            const res = await  axios.get(`/deletepost/${single_post}`)
+            if(res.data.success){
+              try {
+                console.log(document.referrer);
+                window.location.href = document.referrer
+              } catch (error) {
+                console.log(err);
+              }
+            }else{
+              console.log("nahi aaya");
+            }
+          } 
+          else if (e.target.classList.contains("dlt-cmt")) {
             const postId = e.target.getAttribute("data-post-id");
             const commentId = e.target.getAttribute("data-comment-id");
 
@@ -189,7 +198,6 @@
             e.target.classList.contains("ri-bookmark-line") ||
             e.target.classList.contains("ri-bookmark-fill")
           ) {
-            // console.log(e.target.id);
             const res = await axios.get(`/bookmark-post/${e.target.id}`);
             loadPosts();
           }

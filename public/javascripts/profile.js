@@ -73,7 +73,8 @@ async function Saveedit() {
   // console.log(user.fullName);
   var x = fullName.value;
   if (fullName.value.trim() == "") {
-    x = "<%= user.fullName %>";
+    const res = await axios.get("/getloggedInUser")
+    x = res.data.loggedInUser.fullName
   }
   const user = {
     fullName: x,

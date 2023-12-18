@@ -1,5 +1,12 @@
+:root {
+  --background-color: rgb(252, 251, 251);
+  --font-color: rgb(0, 0, 0);
+  --secod-font-color: rgb(101, 101, 101);
+  --secondary-font-color: rgb(179, 179, 179);
+  --background-on-hover: rgb(215, 214, 214);
+}
 body {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
   margin: 0;
   padding: 0;
   background-color: #fff;
@@ -10,14 +17,22 @@ body {
   height: 100vh;
   overflow: hidden;
 }
+a {
+  text-decoration: none;
+  color: var(--font-color);
+  font-family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+  font-size: 0.9rem;
+  font-weight: 550;
+}
+
 .main {
   width: 100%;
   height: 100%;
   display: flex;
   /* overflow: hidden; */
 }
-/* nav css */
-.navbar { 
+/* navbar css */
+.navbar {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -31,6 +46,10 @@ body {
   border-right: 0.1px solid rgba(76, 75, 75, 0.466);
   position: sticky;
   top: 0px;
+}
+.navbar > a {
+  all: unset;
+  font-weight: 200;
 }
 
 @media (max-width: 750px) {
@@ -102,30 +121,80 @@ body {
     width: 79px;
   }
 }
+
+@media (max-width: 1003px) {
+  .follow-section {
+    display: none;
+  }
+
+  .middle-section .post-area {
+    padding-inline: 0;
+  }
+}
+
+@media (max-width: 690px) {
+  .post-section .story-section {
+    justify-content: space-evenly;
+  }
+
+  .story-section #story-7 {
+    display: none;
+  }
+}
+
+@media (max-width: 562px) {
+  .story-section #story-6 {
+    display: none;
+  }
+}
+
+@media (max-width: 482px) {
+  .story-section #story-5 {
+    display: none;
+  }
+}
+
+@media (max-width: 402px) {
+  .story-section #story-4 {
+    display: none;
+  }
+}
+
+@media (max-width: 323px) {
+  #story-3 {
+    display: none;
+  }
+}
+
+@media (max-width: 259px) {
+  #story-2 {
+    display: none;
+  }
+}
+
 .instagram-text-logo {
   width: 100px;
   margin: 15px 20px;
   cursor: pointer;
 }
+
 .instagram-text-logo img {
   width: 100%;
   /* filter: brightness(5); */
 }
+
 .sub-section {
   display: flex;
   align-items: center;
-  gap: 25px;
+  gap: 18px;
   border-radius: 5px;
   cursor: pointer;
   padding: 10px 20px;
   transition: all 0.2s ease;
 }
-.sub-section a {
-  all: unset;
-}
 
 .sub-section:hover {
-  background-color:  rgb(215, 214, 214);
+  background-color: var(--background-on-hover);
 }
 
 .sub-section:hover i {
@@ -133,7 +202,7 @@ body {
   transition: all 0.2s ease;
 }
 
-.sub-section:hover a {
+.sub-section  :hover a {
   font-weight: 600;
 }
 
@@ -160,6 +229,7 @@ body {
   height: 100%;
   border-radius: 50%;
 }
+
 .menu-section {
   display: flex;
   gap: 25px;
@@ -187,12 +257,7 @@ body {
   font-size: 1.2rem;
   transition: all 0.2s ease;
 }
-.menu-section i {
-  color: var(--font-color);
-  font-size: 1.2rem;
-  transition: all 0.2s ease;
-}
-
+/* navbar end */
 .chat-page {
   width: 94%;
   height: 100%;
@@ -370,10 +435,10 @@ body {
   color: black;
 }
 /* search card */
-.search-links{
+/* .search-links{
   text-decoration: none;
   color: black;
-}
+} */
 
 .search-card {
   margin: auto;
@@ -735,7 +800,7 @@ img {
 }
 .active{
   font-weight: bold !important;
-  background-color:  rgb(215, 214, 214);
+  background-color:  rgb(215, 214, 214) !important;
 }
 /* post cnt */
 .post-container {

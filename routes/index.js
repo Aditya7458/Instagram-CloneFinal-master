@@ -135,6 +135,26 @@ router.get("/singlepost/:id", isLoggedIn, async function (req, res, next) {
 router.get("/forgot", function (req, res, next) {
   res.render("forgetPassword");
 });
+// update profile
+router.get("/getloggedInUser", async function (req, res, next) {
+  const user = await userSchema.findOne({ _id: req.user._id });
+  res.json({ loggedInUser: user });
+});
+
+// delete route
+router.get("/deletepost/:id", async function (req, res, next) {
+  const user = await userSchema.findOne({
+    _id: req.user._id,
+  });
+  var index = user.posts.indexOf(req.params.id);
+  user.posts.splice(index, 1);
+  await user.save();
+  await postSchema.findByIdAndDelete(req.params.id);
+  res.json({
+    success: true,
+    message: "post deleted",
+  });
+});
 
 router.post("/forgot", async (req, res, next) => {
   var user = await userSchema.findOne({
@@ -276,7 +296,6 @@ router.get("/reels", isLoggedIn, async function (req, res, next) {
   var noti = await Notification.find({ userTo: req.user._id })
     .populate("userTo")
     .populate("userFrom")
-    .populate("entityId")
     .sort({ CreatedAt: -1 });
   const posts = await postSchema.find({}).populate("author");
   res.render("reels", {

@@ -281,7 +281,7 @@ body {
 
 /* post section started frome here */
 .post-section {
-  background-color: red;
+  /* background-color: red; */
   padding: 30px 40px;
   /* border: 2px solid pink; */
   background-color: var(--background-color);
@@ -707,20 +707,22 @@ body {
 }
 .share-icons {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
   position: relative;
-  top: 50%;
-  transform: translate(0, -50%);
+  /* top: 50%; */
+  /* transform: translate(0, -50%); */
   padding: 20px 20px;
-  justify-content: space-around;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
 }
-.share-icons i {
+.share-icons a {
+  cursor: pointer;
   font-size: xxx-large;
   border-radius: 10px;
   box-shadow: 2px 2px 2px #0000008f;
   background-color: rgba(0, 128, 0, 0.438);
-  padding: 50px;
+  padding: 20px;
 }
 .overlay {
   position: fixed;
@@ -758,7 +760,7 @@ body {
   display: flex;
   box-shadow: 2px 2px 2px #0000003f;
   flex-direction: column;
-  /* justify-content: center; */
+  justify-content: center;
   gap: 1rem;
   border-radius: 5px;
 }
@@ -770,6 +772,7 @@ body {
   border-bottom: 0.1px solid #00000067;
 }
 
+
 .main-nav h3 {
   text-align: center;
   font-weight: 600;
@@ -779,6 +782,7 @@ body {
 
 .upload-nav {
   display: flex;
+  cursor: pointer;
   position: relative;
   height: 80%;
   align-items: end;
@@ -1065,7 +1069,7 @@ video {
 .story-img {
   display: none;
   width: 100%;
-  height: 100%;
+  height: 80%;
   align-items: center;
   justify-content: center;
   flex-direction: column;
@@ -1076,11 +1080,14 @@ video {
   padding: 0.5rem;
 }
 .story-img img {
-  width: 50vh;
-  max-height: 70vh;
+  max-width: 80%;
+  max-height: 80%;
 }
 .story-img > video {
-  width: 200px;
+  max-width: 80%;
+  height: 90%;
+  object-position: center;
+  object-fit: cover;
 }
 /* story overlay */
 .overlay3 {
@@ -1226,6 +1233,7 @@ video {
 }
 .add_story {
   position: absolute;
+  cursor: pointer;
 }
 .add_story_btn {
   position: absolute;
@@ -1394,6 +1402,7 @@ a {
 }
 .upload-nav-post {
   display: flex;
+  cursor: pointer;
   position: relative;
   height: 80%;
   align-items: end;
@@ -1406,7 +1415,7 @@ a {
 .post-img {
   display: none;
   width: 100%;
-  height: 100%;
+  height: 80%;
   align-items: center;
   justify-content: center;
   flex-direction: column;
@@ -1417,11 +1426,16 @@ a {
   padding: 0.5rem;
 }
 .post-img img {
-  width: 50vh;
-  max-height: 70vh;
+  max-width: 80%;
+  max-height: 80%;
+  object-fit: cover;
+  object-position: center;
 }
 .post-img > video {
-  width: 200px;
+  max-width: 80%;
+  max-height: 80%;
+  object-fit: cover;
+  object-position: center;
 }
 /* post menu overlay */
 .post-menu {
@@ -1445,8 +1459,8 @@ a {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   border-radius: 8px;
   z-index: 1000;
-  width: 392px;
-  height: 432px;
+  min-width: 342px;
+  min-height: 287px;
   display: flex;
   flex-direction: column;
   align-items: stretch;

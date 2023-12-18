@@ -33,12 +33,11 @@
               type="text"
               name="fullName"
               placeholder="Edit your name"
-              value="<%= loggedInUser.fullName %>"
+              value="<%=loggedInUser.fullName%>"
             />
             <h3>Bio</h3>
             <input
               aria-describedby=""
-              maxlength="30"
               aria-required="true"
               autocapitalize="off"
               autocorrect="off"
@@ -139,7 +138,7 @@
           </div>
           <div class="profile_desc">
             <div class="profile_name">
-              <h4 class="profile-user-name"><%=user.fullName %></h4>
+              <h4 class="profile-user-name"><%=user.fullName%></h4>
               <% if(loggedInUser._id.toString()==user._id.toString()){ %>
               <button class="profile-edit-btn">Edit profile</button>
               <% }else if(followUser.followers.includes(loggedInUser._id)
@@ -164,9 +163,9 @@
             <div class="profile_bio">
               <h6 class="profile-real-bio"><%= user.bio %></h6>
             </div>
-            <div class="links">
+            <a href="https://<%=user.links%>"target="_blank" class="links">
               <h6 class="profile-real-links"><%= user.links %></h6>
-            </div>
+            </a>
           </div>
         </div>
         <div class="profile__section">

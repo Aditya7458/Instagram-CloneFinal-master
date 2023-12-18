@@ -27,45 +27,31 @@
     <link rel="stylesheet" href="../stylesheets/home.css" />
   </head>
   <body>
-  <% function timeAgo(input) { const date = input instanceof Date ? input :
-      new Date(input); const formatter = new Intl.RelativeTimeFormat("en");
-      const ranges = { years: 3600 * 24 * 365, months: 3600 * 24 * 30, weeks:
-      3600 * 24 * 7, days: 3600 * 24, hours: 3600, minutes: 60, seconds: 1, };
-      const secondsElapsed = (date.getTime() - Date.now()) / 1000; for (let key
-      in ranges) { if (ranges[key] < Math.abs(secondsElapsed)) { const delta =
-      secondsElapsed / ranges[key]; return formatter.format(Math.round(delta),
-      key); } } } %>    
+    <% function timeAgo(input) { const date = input instanceof Date ? input :
+    new Date(input); const formatter = new Intl.RelativeTimeFormat("en"); const
+    ranges = { years: 3600 * 24 * 365, months: 3600 * 24 * 30, weeks: 3600 * 24
+    * 7, days: 3600 * 24, hours: 3600, minutes: 60, seconds: 1, }; const
+    secondsElapsed = (date.getTime() - Date.now()) / 1000; for (let key in
+    ranges) { if (ranges[key] < Math.abs(secondsElapsed)) { const delta =
+    secondsElapsed / ranges[key]; return formatter.format(Math.round(delta),
+    key); } } } %>
     <div class="main">
       <div class="post-menu">
         <div class="upload-form2">
           <div class="menu-container">
-            <button style="color: #ED4956;" class="menu-items">
-              <b>Report</b>
+            <button style="color: #ed4956" class="menu-items block">
+              <b class="block">Block Account</b>
             </button>
-            <button style="color: #ED4956;" class="menu-items">
+            <button style="color: #ed4956" class="menu-items">
               <b>Unfollow</b>
             </button>
-            <button style="color: #ED4956;" class="menu-items delete">
-              <b>Delete</b>
+            <button style="color: #ed4956; display:none" class="menu-items delete">
+              <b class="delete">Delete</b>
             </button>
-            <button class="menu-items goto">
-              Go to post
-            </button>
-            <button class="menu-items shareTo">
-              Share to...
-            </button>
-            <button class="menu-items copy">
-              Copy link
-            </button>
-            <button class="menu-items">
-              Add To favourites
-            </button>
-            <button class="menu-items about-account">
-              About this account
-            </button>
-            <button class="menu-items cancel">
-              Cancel
-            </button>
+            <button class="menu-items goto">Go to post</button>
+            <button class="menu-items copy">Copy link</button>
+            <button class="menu-items about-account">About this account</button>
+            <button class="menu-items cancel">Cancel</button>
           </div>
         </div>
       </div>
@@ -96,8 +82,8 @@
             <a class="whatsapp-a" target="_blank" href=""
               ><i class="ri-whatsapp-line"></i
             ></a>
-            <i class="ri-qr-scan-2-line"></i>
-            <i class="fa-regular fa-message msg-share"></i>
+           <a > <i class="ri-qr-scan-2-line"></i></a>
+            <a ><i class="fa-regular fa-message msg-share"></i></a>
           </div>
         </div>
       </div>
@@ -162,7 +148,7 @@
           </div>
         </form>
       </div>
-    
+
       <div class="notification" id="notification">
         <h2>Notifications</h2>
         <% noti.reverse().forEach((i)=>{%> <% if(i.notificationType == "like"){
@@ -216,7 +202,7 @@
           enctype="multipart/form-data"
           onsubmit="return checkFile('file_inp')"
         >
-          <div class="main-nav-post ">
+          <div class="main-nav-post">
             <h3>Create Post</h3>
           </div>
           <div class="upload-nav-post">
@@ -245,9 +231,9 @@
               ></path>
             </svg>
           </div>
-           <div class="post-img">
+          <div class="post-img">
             <span> Preview: </span>
-            <img style="display: none;" class="imgg-post" src="" alt="" />
+            <img style="display: none" class="imgg-post" src="" alt="" />
             <video
               style="display: none"
               class="vdo-post"
@@ -266,10 +252,10 @@
             />
             <h6 class="upload-err">Invalid File type</h6>
             <input
-            
               type="file"
               name="file"
               id="file_inp"
+              onchange="checkFile(id)"
             />
             <button type="submit">Post</button>
           </div>

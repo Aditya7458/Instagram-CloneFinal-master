@@ -7,6 +7,17 @@
       name="viewport"
       content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1"
     />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+      integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"
+    />
     <!-- Link Swiper's CSS -->
     <link
       rel="stylesheet"
@@ -27,13 +38,14 @@
   </head>
   <body>
     <% function timeAgo(input) { const date = input instanceof Date ? input :
-      new Date(input); const formatter = new Intl.RelativeTimeFormat("en");
-      const ranges = { years: 3600 * 24 * 365, months: 3600 * 24 * 30, weeks:
-      3600 * 24 * 7, days: 3600 * 24, hours: 3600, minutes: 60, seconds: 1, };
-      const secondsElapsed = (date.getTime() - Date.now()) / 1000; for (let key
-      in ranges) { if (ranges[key] < Math.abs(secondsElapsed)) { const delta =
-      secondsElapsed / ranges[key]; return formatter.format(Math.round(delta),
-      key); } } } %>
+    new Date(input); const formatter = new Intl.RelativeTimeFormat("en"); const
+    ranges = { years: 3600 * 24 * 365, months: 3600 * 24 * 30, weeks: 3600 * 24
+    * 7, days: 3600 * 24, hours: 3600, minutes: 60, seconds: 1, }; const
+    secondsElapsed = (date.getTime() - Date.now()) / 1000; for (let key in
+    ranges) { if (ranges[key] < Math.abs(secondsElapsed)) { const delta =
+    secondsElapsed / ranges[key]; return formatter.format(Math.round(delta),
+    key); } } } %>
+    <!-- post overlay -->
     <div class="overlay">
       <!-- post upload form -->
       <form
@@ -41,6 +53,7 @@
         class="upload-form"
         method="post"
         enctype="multipart/form-data"
+        onsubmit="return checkFile('file_inp-reels')"
       >
         <div class="main-nav">
           <h3>Create Post</h3>
@@ -71,6 +84,22 @@
             ></path>
           </svg>
         </div>
+        <div class="post-img">
+          <span> Preview: </span>
+          <div class="image-preview">
+            <img style="display: none" class="imgg-post" src="" alt="" />
+          </div>
+          <div class="vdo-preview">
+            <video
+              style="display: none"
+              class="vdo-post"
+              controls
+              autoplay
+              loop
+              src=""
+            ></video>
+          </div>
+        </div>
         <div class="upload-cnt">
           <input
             type="text"
@@ -79,7 +108,12 @@
             id=""
           />
           <h6 class="upload-err">Invalid File type</h6>
-          <input type="file" name="file" id="file_inp" />
+          <input
+            type="file"
+            name="file"
+            id="file_inp-reels"
+            onchange="checkFile(id)"
+          />
           <button type="submit">Post</button>
         </div>
       </form>
@@ -147,38 +181,7 @@
         <a href="#">Log out</a>
       </div>
     </div>
-    <!-- post overlay -->
-    <div class="overlay">
-      <!-- post upload form -->
-      <form
-        action="/uploadpost"
-        class="upload-form"
-        method="post"
-        enctype="multipart/form-data"
-      >
-        <div class="main-nav">
-          <h3>Create Post</h3>
-          <img src="../images/cross.png" alt="" class="cross" />
-        </div>
-        <div class="upload-nav">
-          <div class="img-cnt">
-            <img src="<%= user.profile_picture %>" />
-          </div>
-          <div class="username"><%=user.fullName%></div>
-        </div>
-        <div class="upload-cnt">
-          <input
-            type="text"
-            name="title"
-            placeholder="What's on your mind ?"
-            id=""
-          />
-          <h6 class="upload-err">Invalid File type</h6>
-          <input type="file" name="file" id="file_inp" onchange="checkFile()" />
-          <button type="submit">Post</button>
-        </div>
-      </form>
-    </div>
+
     <!-- card overlay -->
     <div class="search-card mdl-card mdl-shadow--2dp">
       <h2>Search</h2>
@@ -188,7 +191,8 @@
       <h4>search result</h4>
       <div class="search-content"></div>
     </div>
-    <div class="swiper  mySwiper">
+    <div class="swiper mySwiper">
+      <!-- nav-bar -->
       <nav>
         <div class="navbar">
           <div class="instagram-text-logo">
@@ -211,7 +215,10 @@
               >Search
             </div>
           </a>
-          <a class="search-links <%=currentRoute === '/reels'?'active':'' %>" href="/reels">
+          <a
+            class="search-links <%=currentRoute === '/reels'?'active':'' %>"
+            href="/reels"
+          >
             <div class="sub-section">
               <i class="fa-solid fa-clapperboard"></i>Reels
             </div>

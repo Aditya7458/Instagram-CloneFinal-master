@@ -82,70 +82,69 @@
       </div>
     </div>
     <div class="main">
+      <!-- nav-bar -->
       <nav>
-        <nav>
-          <div class="navbar">
-            <div class="instagram-text-logo">
-              <img
-                src="https://i.postimg.cc/qMFTcDw1/instagram-text.png"
-                id="white-color"
-                alt=""
-              />
-            </div>
-            <a class="search-links" href="/">
-              <div class="sub-section" id="clicked">
-                <i class="fa-solid fa-house"></i>Home
-              </div>
-            </a>
-            <a class="search-links">
-              <div class="sub-section">
-                <i class="fa-solid fa-magnifying-glass search-btn"></i>Search
-              </div>
-            </a>
-            <a class="search-links" href="/reels">
-              <div class="sub-section">
-                <i class="fa-solid fa-clapperboard"></i>Reels
-              </div>
-            </a>
-            <a
-              class="search-links <%=currentRoute === '/chat'?'active':'' %>"
-              href="/chat"
-            >
-              <div class="sub-section">
-                <i class="fa-regular fa-message"></i>Messages
-              </div>
-            </a>
-
-            <a class="search-links">
-              <div class="sub-section">
-                <i class="fa-regular fa-heart"></i>Notification
-              </div>
-            </a>
-
-            <a class="search-links" href="/explore">
-              <div class="sub-section">
-                <i class="fa-regular fa-compass"></i>Explore
-              </div>
-            </a>
-            <a class="search-links">
-              <div class="sub-section">
-                <i class="fa-solid fa-square-plus"></i>Create
-              </div>
-            </a>
-            <a class="search-links" href="/profile/<%= user._id %>">
-              <div class="sub-section">
-                <div class="profile-img">
-                  <img src="<%= user.profile_picture %>" alt="" />
-                </div>
-                Profile
-              </div>
-            </a>
-            <div class="menu-section" id="hidden">
-              <a> <i class="fa-solid fa-bars"></i></a>
-              <a>More</a>
-            </div>
+        <div class="navbar">
+          <div class="instagram-text-logo">
+            <img
+              src="https://i.postimg.cc/qMFTcDw1/instagram-text.png"
+              id="white-color"
+              alt=""
+            />
           </div>
-        </nav>
+          <a class="search-links" href="/">
+            <div class="sub-section" id="clicked">
+              <i class="fa-solid fa-house"></i>Home
+            </div>
+          </a>
+          <a class="search-links">
+            <div class="sub-section">
+              <i class="fa-solid fa-magnifying-glass search-btn"></i>Search
+            </div>
+          </a>
+          <a class="search-links" href="/reels">
+            <div class="sub-section">
+              <i class="fa-solid fa-clapperboard"></i>Reels
+            </div>
+          </a>
+          <a
+            class="search-links <%=currentRoute === '/chat'?'active':'' %>"
+            href="/chat"
+          >
+            <div class="sub-section">
+              <i class="fa-regular fa-message"></i>Messages
+            </div>
+          </a>
+
+          <a class="search-links">
+            <div class="sub-section">
+              <i class="fa-regular fa-heart"></i>Notification
+            </div>
+          </a>
+
+          <a class="search-links" href="/explore">
+            <div class="sub-section">
+              <i class="fa-regular fa-compass"></i>Explore
+            </div>
+          </a>
+          <a class="search-links">
+            <div class="sub-section">
+              <i class="fa-solid fa-square-plus"></i>Create
+            </div>
+          </a>
+          <a class="search-links" href="/profile/<%= user._id %>">
+            <div class="sub-section">
+              <div class="profile-img">
+                <img src="<%= user.profile_picture %>" alt="" />
+              </div>
+              Profile
+            </div>
+          </a>
+          <div class="menu-section" id="hidden">
+            <a> <i class="fa-solid fa-bars"></i></a>
+            <a>More</a>
+          </div>
+        </div>
       </nav>
       <div class="chat-page">
         <div class="left-sec">
@@ -360,37 +359,36 @@
           element.scrollTop = element.scrollHeight;
         }, time);
       }
-      document.addEventListener("DOMContentLoaded",()=>{
+      document.addEventListener("DOMContentLoaded", () => {
         document
-        .querySelector(".left-chat-sec")
-        .addEventListener("click", function (e) {
-          updateScroll(500);
-          var userId = e.target.getAttribute("data-id");
-          var userImg = e.target.getAttribute("data-img");
-          var userName = e.target.getAttribute("data-name");
-          if (userId == null || userImg == null || userName == null) {
-            return;
-          }
-          document.querySelector(
-            ".right-header"
-          ).innerHTML = `<a class="content-chat-header" href="/profile/${userId}">
+          .querySelector(".left-chat-sec")
+          .addEventListener("click", function (e) {
+            updateScroll(500);
+            var userId = e.target.getAttribute("data-id");
+            var userImg = e.target.getAttribute("data-img");
+            var userName = e.target.getAttribute("data-name");
+            if (userId == null || userImg == null || userName == null) {
+              return;
+            }
+            document.querySelector(
+              ".right-header"
+            ).innerHTML = `<a class="content-chat-header" href="/profile/${userId}">
        <div class="img">
         <img src="${userImg}" alt="" />
       </div>
       <div class="profile-name">${userName}</div></a>`;
-          receiver_id = userId;
+            receiver_id = userId;
 
-          document.querySelector(".inbox").style.display = "none";
-          document.querySelector(".chat-area").style.display = "block";
-          document.querySelector(".right-header").style.display = "flex";
-          document.querySelector("#chat-form").style.display = "flex";
-          socket.emit("existsChat", {
-            sender_id: sender_id,
-            receiver_id: receiver_id,
+            document.querySelector(".inbox").style.display = "none";
+            document.querySelector(".chat-area").style.display = "block";
+            document.querySelector(".right-header").style.display = "flex";
+            document.querySelector("#chat-form").style.display = "flex";
+            socket.emit("existsChat", {
+              sender_id: sender_id,
+              receiver_id: receiver_id,
+            });
           });
-        });
-
-      })
+      });
       socket.on("getOnlineUser", function (data) {
         $("#" + data.user_id + "-status").html("online");
         $("#" + data.user_id + "-status").removeClass("offline-status");

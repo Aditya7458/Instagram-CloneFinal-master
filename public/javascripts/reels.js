@@ -1,3 +1,31 @@
+var checkFile = (id) => {
+  var selected_inp = document.getElementById(id);
+  // console.log(selected_inp.files.length);
+  // console.log(selected_inp[0]?.files?.length);
+
+  if (!selected_inp.files.length) {
+    toastr.error("Please select a file.");
+    return false;
+  }
+
+  const allowedMimeTypes = [
+    "image/jpeg",
+    "image/jpg",
+    "image/png",
+    "image/avif",
+    "video/mp4",
+    "video/mpeg",
+    "video/quicktime",
+  ];
+  // console.log(selected_inp?.files[0].type)
+  if (!allowedMimeTypes.includes(selected_inp?.files[0]?.type)) {
+    toastr.error("Please select a valid file type.");
+    selected_inp.value = "";
+    return false;
+  }
+  return true;
+};
+
 $(document).ready(function () {
   var swiper;
   var liking = false;
@@ -76,7 +104,7 @@ $(document).ready(function () {
         );
 
         const res = await axios.get(`/bookmark-post/${postId}`);
-        console.log(res);
+        // console.log(res);
         setTimeout(() => {
           bookmarking = false;
           handleVideo(swiper);
@@ -97,7 +125,7 @@ $(document).ready(function () {
         likeIcon.css("color", likeIcon.hasClass("fa-solid") ? "red" : "");
 
         const res = await axios.get(`/like/${postId}`);
-        console.log(res);
+        // console.log(res);
 
         setTimeout(() => {
           liking = false;
@@ -179,7 +207,7 @@ document.querySelector(".search-btn").addEventListener("click", () => {
   }
 });
 document.querySelector(".swiper").addEventListener("click", (e) => {
-  console.log(e.target);
+  // console.log(e.target);
   if (
     e.target.classList.contains("swiper-wrapper") ||
     e.target.classList.contains("swiper")
@@ -234,13 +262,50 @@ overlay.addEventListener("click", (e) => {
     e.target.classList.contains("cross")
   ) {
     overlay.style.display = "none";
+    document.querySelector(".upload-nav").style.display = "flex";
+    document.querySelector(".main-nav").style.display = "initial";
+    document.querySelector(".post-img").style.display = "none";
+    document.querySelector(".image-preview").style.display = "none";
+    document.querySelector(".vdo").style.display = "none";
+    document.querySelector(".vdo-preview").style.display = "none";
+    document.querySelector(".imgg").style.display = "none";
+    document.querySelector("#file_inp-reels").value = "";
     overlay.style.transition = "all ease .5s";
   }
 });
 document.querySelector(".upload-nav").addEventListener("click", () => {
-  document.querySelector("#file_inp").click();
+  document.querySelector("#file_inp-reels").click();
 });
 // menu overlay
 document.querySelector(".menu-section").addEventListener("click", (e) => {
-  document.querySelector(".menu-overlay").style.bottom = "160px"
+  document.querySelector(".menu-overlay").style.bottom = "160px";
+});
+
+// post preview
+document.querySelector("#file_inp-reels").addEventListener("change", (e) => {
+  if (e.target.files[0].type === "video/mp4") {
+    // console.log(e.target.files[0].type);
+    document.querySelector(".main-nav").style.display = "none";
+    document.querySelector(".upload-nav").style.display = "none";
+    document.querySelector(".post-img").style.display = "flex";
+    document.querySelector(".vdo-post").style.display = "block";
+  } else {
+    document.querySelector(".upload-nav").style.display = "none";
+    document.querySelector(".main-nav").style.display = "none";
+    document.querySelector(".post-img").style.display = "flex";
+    document.querySelector(".imgg-post").style.display = "block";
+  }
+  if (e.target.files && e.target.files[0]) {
+    var reader = new FileReader();
+    reader.onload = function (event) {
+      // var fileContent = event.target.result;
+      // console.log(fileContent);
+      if (e.target.files[0].type === "video/mp4") {
+        document.querySelector(".vdo-post").src = event.target.result;
+      } else {
+        document.querySelector(".imgg-post").src = event.target.result;
+      }
+    };
+    reader.readAsDataURL(e.target.files[0]);
+  }
 });

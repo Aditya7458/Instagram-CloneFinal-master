@@ -11,7 +11,7 @@ var flag = 0;
 var storys = document.querySelector(".story-section");
 var checkFile = (id) => {
   var selected_inp = document.getElementById(id);
-  console.log(selected_inp.files.length);
+  // console.log(selected_inp.files.length);
   // console.log(selected_inp[0]?.files?.length);
 
   if (!selected_inp.files.length) {
@@ -195,7 +195,7 @@ async function postComment(postId) {
       const res = await axios.post(`/comment/${postId}`, {
         comment: commentText,
       });
-      console.log(res.data);
+      // console.log(res.data);
       commentInput.value = "";
       loadComments(postId);
     } catch (error) {
@@ -264,108 +264,121 @@ const shareHandler = async (e) => {
   const res = await axios.get(`/shareqr/${e}`);
   postId = e;
   document.querySelector(".share-btn").style.display = "block";
-
-  document.querySelector(
-    ".whatsapp-a"
-  ).href = `http://web.whatsapp.com/send?text=http://localhost:3000/singlepost/${e}`;
-
   const qrScanElement = document.querySelector(".ri-qr-scan-2-line");
   const msgShareElement = document.querySelector(".msg-share");
   const popupContainer = document.querySelector("#popup-container");
-
+  const handleSendButtonClick = async (event) => {
+    if (event.target.classList.contains("send-button")) {
+      receiver_id = event.target.id;
+      const shareChatMsgResponse = await axios.get(
+        `/share-chat-msg/${receiver_id}/${postId}`
+      );
+      if (shareChatMsgResponse.data.success) {
+        closePopup();
+        toastr.success(
+          `Post Sent to ${shareChatMsgResponse.data.data.receiver_id.fullName}`
+        );
+      } else {
+        toastr.error(shareChatMsgResponse.data.msg);
+      }
+      popupContainer.removeEventListener("click", handleSendButtonClick);
+    }
+  };
   const handleQrScanClick = () => {
     document.querySelector(".share-btn").style.display = "none";
     document.querySelector(".qrimg").src = `${res.data.qrCode}`;
     document.querySelector(".share-menu").style.display = "block";
     qrScanElement.removeEventListener("click", handleQrScanClick);
+    popupContainer.removeEventListener("click", handleSendButtonClick);
   };
 
   const handleMsgShareClick = () => {
     document.querySelector(".share-btn").style.display = "none";
     document.querySelector(".share-overlay").style.display = "block";
     msgShareElement.removeEventListener("click", handleMsgShareClick);
+    // popupContainer.removeEventListener("click", handleSendButtonClick);
   };
-
-  const handleSendButtonClick = async (e) => {
-    if (e.target.classList.contains("send-button")) {
-      receiver_id = e.target.id;
-      const res = await axios.get(`/share-chat-msg/${receiver_id}/${postId}`);
-      console.log(res.data.success);
-      if (res.data.success) {
-        closePopup();
-        toastr.success(`Post Sent to ${res.data.data.receiver_id.fullName}`);
-      } else {
-        toastr.error(res.data.msg);
-      }
-      popupContainer.removeEventListener("click", handleSendButtonClick);
-    }
+  const handleWhatsAppShare = () => {
+    document.querySelector(".share-btn").style.display = "none";
+    // Replace this URL with the appropriate URL for WhatsApp sharing
+    document.querySelector(
+      ".whatsapp-a"
+    ).href = `http://web.whatsapp.com/send?text=http://localhost:3000/singlepost/${postId}`;
+    // Show the WhatsApp share menu or perform any other actions needed
+    // For example: document.querySelector(".whatsapp-share-menu").style.display = "block";
+    document
+      .querySelector(".whatsapp-a")
+      .removeEventListener("click", handleWhatsAppShare);
+    popupContainer.removeEventListener("click", handleSendButtonClick);
   };
-
+  qrScanElement.removeEventListener("click", handleQrScanClick);
+  msgShareElement.removeEventListener("click", handleMsgShareClick);
+  popupContainer.removeEventListener("click", handleSendButtonClick);
+  document
+    .querySelector(".whatsapp-a")
+    .removeEventListener("click", handleWhatsAppShare);
+  // Add event listeners
   qrScanElement.addEventListener("click", handleQrScanClick);
   msgShareElement.addEventListener("click", handleMsgShareClick);
+  document
+    .querySelector(".whatsapp-a")
+    .addEventListener("click", handleWhatsAppShare);
   popupContainer.addEventListener("click", handleSendButtonClick);
 };
+const menuHandler = async (postId) => {
+  const postMenu = document.querySelector(".post-menu");
+  const response = await axios.get(`/post/${postId}`);
+  if (response.data.user.posts.includes(postId)) {
+    document.querySelector(".delete").style.display="block"
+  } else {
+    document.querySelector(".delete").style.display="none"
+  }
+  // Remove existing event listener to avoid multiple bindings
+  postMenu.removeEventListener("click", menuClickHandler);
+
+  postMenu.style.display = "block";
+  postMenu.addEventListener("click", menuClickHandler);
+
+  async function menuClickHandler(e) {
+    if (
+      e.target.classList.contains("post-menu") ||
+      e.target.classList.contains("cancel")
+    ) {
+      postMenu.style.display = "none";
+      postMenu.style.transition = "all ease .5s";
+    } else if (e.target.classList.contains("goto")) {
+      window.location.href = `/singlepost/${postId}`;
+    } else if (e.target.classList.contains("about-account")) {
+      const res = await axios.get(`/post/${postId}`);
+      window.location.href = `/profile/${res.data.post.author._id}`;
+    } else if (e.target.classList.contains("delete")) {
+      // console.log("hello");
+      const res = await axios.get(`/deletepost/${postId}`);
+      console.log(res.data);
+      if (res.data.success) {
+        postMenu.style.display = "none";
+        loadPosts();
+        toastr.success(res.data.message);
+      }
+    } else if (e.target.classList.contains("copy")) {
+      const res = await axios.get(`/cpy-link/${postId}`);
+      if (res.data.success) {
+        toastr.success("link copied to clipboard");
+        postMenu.style.display = "none";
+      }
+    }
+    postMenu.removeEventListener("click", menuClickHandler);
+  }
+};
+``;
+
 post_area.addEventListener("click", async (e) => {
   if (e.target.classList.contains("like")) {
     likeHandler(e.target.id);
   } else if (e.target.classList.contains("fa-bookmark")) {
     handdleBookmark(e.target.id);
   } else if (e.target.classList.contains("fa-grip-lines")) {
-    document.querySelector(".post-menu").style.display = "block";
-    var postId = e.target.id;
-    document.querySelector(".goto").addEventListener("click", () => {
-      window.location.href = `/singlepost/${postId}`;
-    });
-    document.querySelector(".shareTo").addEventListener("click", async () => {
-      document.querySelector(".post-menu").style.display = "none";
-      document.querySelector(".share-btn").style.display = "block";
-      const res = await axios.get(`/shareqr/${postId}`);
-      document.querySelector(
-        ".whatsapp-a"
-      ).href = `http://web.whatsapp.com/send?text=http://localhost:3000/singlepost/${postId}`;
-      document
-        .querySelector(".ri-qr-scan-2-line")
-        .addEventListener("click", (e) => {
-          document.querySelector(".share-btn").style.display = "none";
-          document.querySelector(".qrimg").src = `${res.data.qrCode}`;
-          document.querySelector(".share-menu").style.display = "block";
-        });
-      document.querySelector(".msg-share").addEventListener("click", (e) => {
-        document.querySelector(".share-btn").style.display = "none";
-        document.querySelector(".share-overlay").style.display = "block";
-      });
-      document
-        .querySelector("#popup-container")
-        .addEventListener("click", async (e) => {
-          if (e.target.classList.contains("send-button")) {
-            receiver_id = e.target.id;
-            const res = await axios.get(
-              `/share-chat-msg/${receiver_id}/${postId}`
-            );
-            console.log(res.data.data.receiver_id.fullName);
-            if (res.data.success) {
-              closePopup();
-              toastr.success(
-                `Post Sent to ${res.data.data.receiver_id.fullName}`
-              );
-            }
-          }
-        });
-    });
-    document.querySelector(".copy").addEventListener("click", async (e) => {
-      const res = await axios.get(`/cpy-link/${postId}`);
-      if (res.data.success) {
-        toastr.success("link copied to clipboard");
-        document.querySelector(".post-menu").style.display = "none";
-      }
-    });
-    document
-      .querySelector(".about-account")
-      .addEventListener("click", async (e) => {
-        const res = await axios.get(`/post/${postId}`);
-        // console.log(res.data);
-        window.location.href = `/profile/${res.data.post.author._id}`;
-      });
+    menuHandler(e.target.id);
   } else if (e.target.classList.contains("fa-paper-plane")) {
     // console.log(e.target.id);
     shareHandler(e.target.id);
@@ -373,7 +386,7 @@ post_area.addEventListener("click", async (e) => {
     document.body.style.overflow = "hidden";
     const postId = e.target.id;
     const { data } = await axios.get(`/post/${postId}`);
-    console.log(data);
+    // console.log(data);
     overlay2.style.display = "block";
     overlay2.innerHTML = `<div class="comment-popup-container">
       <ul class="comments-list">
@@ -508,7 +521,7 @@ var toggleMenu = function (e) {
 document
   .querySelector(".story-section")
   .addEventListener("click", async (e) => {
-    console.log(e.target);
+    // console.log(e.target);
     if (e.target.classList.contains("add_story_btn")) {
       document.querySelector(".overlay4").style.display = "flex";
       document.body.style.height = "100%";
@@ -516,7 +529,7 @@ document
     } else {
       followersIndx = e.target.getAttribute("key");
       if (!e.target.id) return;
-      console.log(e.target.id);
+      // console.log(e.target.id);
       const { data } = await axios.get(`/story/${e.target.id}`);
       story = data.user.stories;
       storyUser = data.user;
@@ -929,13 +942,3 @@ function closePopup() {
   var popupContainer = document.querySelector(".share-overlay");
   popupContainer.style.display = "none";
 }
-// post menu overlay
-document.querySelector(".post-menu").addEventListener("click", (e) => {
-  if (
-    e.target.classList.contains("post-menu") ||
-    e.target.classList.contains("cancel")
-  ) {
-    document.querySelector(".post-menu").style.display = "none";
-    document.querySelector(".post-menu").style.transition = "all ease .5s";
-  }
-});
