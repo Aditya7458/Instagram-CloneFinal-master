@@ -140,6 +140,7 @@
               Profile
             </div>
           </a>
+
           <div class="menu-section" id="hidden">
             <a> <i class="fa-solid fa-bars"></i></a>
             <a>More</a>
@@ -355,6 +356,7 @@
 
       function updateScroll(time) {
         var element = document.querySelector(".chat-area");
+        element.style.scrollBehavior="smooth"
         setTimeout(() => {
           element.scrollTop = element.scrollHeight;
         }, time);
@@ -363,7 +365,7 @@
         document
           .querySelector(".left-chat-sec")
           .addEventListener("click", function (e) {
-            updateScroll(500);
+            updateScroll(600);
             var userId = e.target.getAttribute("data-id");
             var userImg = e.target.getAttribute("data-img");
             var userName = e.target.getAttribute("data-name");
@@ -443,6 +445,7 @@
       });
 
       socket.on("loadChats", function (data) {
+        
         $(".chat-area").html("");
         var chats = data.chats;
         let html = "";
@@ -473,7 +476,8 @@
           } else if (i.message.messageType === "Post") {
             // Assuming 'file' is a property of the 'content' object in your Post model
             let postContent = i.message.content;
-            html += `
+            if (postContent) {
+              html += `
     <a href="/singlepost/${postContent._id}" onmouseover="playVideo(this)"
           onmouseout="pauseVideo(this)">
       <div class="${addClass} post-container" id="${i._id}">
@@ -499,9 +503,16 @@
         </div>
       </div>
     </a>`;
+            } else {
+              html += ` <div class="${addClass}" id="${i._id}" style="background-color: #000;">
+           <i> <h6 style="color: white;">Message unavailable This content may have been deleted by its owner</h6></i>
+          </div>`;
+            }
           }
         });
+
         $(".chat-area").append(html);
+        updateScroll(100)
       });
       function playVideo(element) {
         var video = element.querySelector("video");
@@ -538,7 +549,7 @@
         });
       });
       socket.on("chatMessageDeleted", function (id) {
-        console.log(id);
+        // console.log(id);
         $("#" + id).remove();
       });
     </script>

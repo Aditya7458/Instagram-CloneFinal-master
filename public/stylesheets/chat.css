@@ -360,6 +360,7 @@ a {
 .chat-area {
   width: 100%;
   height: 78%;
+  /* transition: all ease-in-out .5s; */
   /* margin-bottom: 10px; */
   /* background-color: yellowgreen; */
   overflow-y: auto;

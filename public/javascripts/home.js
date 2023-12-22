@@ -329,9 +329,9 @@ const menuHandler = async (postId) => {
   const postMenu = document.querySelector(".post-menu");
   const response = await axios.get(`/post/${postId}`);
   if (response.data.user.posts.includes(postId)) {
-    document.querySelector(".delete").style.display="block"
+    document.querySelector(".delete").style.display = "block";
   } else {
-    document.querySelector(".delete").style.display="none"
+    document.querySelector(".delete").style.display = "none";
   }
   // Remove existing event listener to avoid multiple bindings
   postMenu.removeEventListener("click", menuClickHandler);
@@ -462,24 +462,22 @@ overlay4.addEventListener("click", (e) => {
   }
 });
 var content = document.querySelector(".search-content");
-document.querySelector(".search-btn").addEventListener("click", () => {
-  // console.log("clicked");
-  if (document.querySelector(".search-card").style.left == "-600px") {
-    content.innerHTML = "";
-    document.querySelector(".search-card").style.left = "65px";
-
-    document.querySelector(".search-btn").classList.add("active");
-    document.querySelector(".search-card").style.display = "flex";
-    document.querySelector(".main").style.position = "fixed";
-    document.querySelector(".home-btn").classList.remove("active");
-    document.querySelector(".mdl-textfield__input").focus();
-    document.querySelector(".mdl-textfield__input").value = "";
-  } else {
-    document.querySelector(".search-card").style.left = "-600px";
-    document.querySelector(".search-btn").classList.remove("active");
-    document.querySelector(".home-btn").classList.add("active");
-    document.querySelector(".search-card").style.display = "none";
-    document.querySelector(".main").style.position = "initial";
+document.querySelector(".navbar").addEventListener("click", (e) => {
+  if (e.target.classList.contains("search-btn")) {
+    if (document.querySelector(".search-card").style.left === "65px") {
+      content.innerHTML = "";
+      document.querySelector(".search-card").style.left = "-600px";
+      document.querySelector(".search-btn").classList.remove("active");
+      document.querySelector(".home-btn").classList.add("active");
+      document.querySelector(".main").style.position = "initial";
+    } else {
+      document.querySelector(".search-card").style.left = "65px";
+      document.querySelector(".search-btn").classList.add("active");
+      document.querySelector(".main").style.position = "fixed";
+      document.querySelector(".home-btn").classList.remove("active");
+      document.querySelector(".mdl-textfield__input").focus();
+      document.querySelector(".mdl-textfield__input").value = "";
+    }
   }
 });
 document.querySelector(".search-inp").addEventListener("keydown", function (e) {
@@ -819,35 +817,35 @@ fetchStories();
 var middle = document.querySelector(".middle-section");
 middle.addEventListener("click", (e) => {
   document.querySelector(".search-card").style.left = "-600px";
+  document.querySelector(".search-btn").classList.remove("active")
+  document.querySelector(".notification-btn").classList.remove("active");
+  document.querySelector(".home-btn").classList.add("active");
+  document.querySelector(".main").style.position = "initial";
+  document.querySelector(".notification").style.left = "-600px";
   document.querySelector(".main").style.position = "initial";
 });
 var follow = document.querySelector(".follow-section");
 follow.addEventListener("click", (e) => {
+  document.querySelector(".search-btn").classList.remove("active")
+  document.querySelector(".home-btn").classList.add("active");
+  document.querySelector(".notification-btn").classList.remove("active");
   document.querySelector(".search-card").style.left = "-600px";
+  document.querySelector(".main").style.position = "initial";
+  document.querySelector(".notification").style.left = "-600px";
   document.querySelector(".main").style.position = "initial";
 });
 
-middle.addEventListener("click", (e) => {
-  document.querySelector(".notification").style.left = "-600px";
-  document.querySelector(".main").style.position = "initial";
-});
-follow.addEventListener("click", (e) => {
-  document.querySelector(".notification").style.left = "-600px";
-  document.querySelector(".main").style.position = "initial";
-});
 document.querySelector(".notification-btn").addEventListener("click", () => {
-  if (document.querySelector(".notification").style.left == "-600px") {
-    document.querySelector(".notification").style.left = "65px";
-    document.querySelector(".home-btn").classList.remove("active");
-    document.querySelector(".notification-btn").classList.add("active");
-    document.querySelector(".notification").style.display = "flex";
-    document.querySelector(".main").style.position = "fixed";
-  } else {
+  if (document.querySelector(".notification").style.left == "65px") {
     document.querySelector(".notification").style.left = "-600px";
     document.querySelector(".notification-btn").classList.remove("active");
     document.querySelector(".home-btn").classList.add("active");
-    document.querySelector(".notification").style.display = "none";
     document.querySelector(".main").style.position = "initial";
+  } else {
+    document.querySelector(".main").style.position = "fixed";
+    document.querySelector(".home-btn").classList.remove("active");
+    document.querySelector(".notification-btn").classList.add("active");
+    document.querySelector(".notification").style.left = "65px";
   }
 });
 
