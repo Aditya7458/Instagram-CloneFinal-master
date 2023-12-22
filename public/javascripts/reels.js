@@ -214,7 +214,7 @@ document.querySelector(".swiper").addEventListener("click", (e) => {
   ) {
     document.querySelector(".search-card").style.left = "-600px";
     document.querySelector(".notification").style.left = "-600px";
-    document.querySelector(".menu-overlay").style.bottom = "-500px";
+    document.querySelector(".menu-overlay").style.display = "none";
   }
 });
 document.querySelector(".search-inp").addEventListener("keydown", function (e) {
@@ -278,7 +278,11 @@ document.querySelector(".upload-nav").addEventListener("click", () => {
 });
 // menu overlay
 document.querySelector(".menu-section").addEventListener("click", (e) => {
-  document.querySelector(".menu-overlay").style.bottom = "160px";
+  if (document.querySelector(".menu-overlay").style.display === "none") {
+    document.querySelector(".menu-overlay").style.display="block";
+  } else {
+    document.querySelector(".menu-overlay").style.display = "none";
+  }
 });
 
 // post preview

@@ -596,11 +596,11 @@ h4 {
   position: fixed;
   height: 380px;
   z-index: 80;
-  bottom: -500px;
+  bottom: 160px;
   transition: all ease-in-out 0.2s;
   left: 10px;
   background-color: #fff;
-  /* display: none; */
+  display: none;
   flex-direction: column;
   gap: 20px;
   align-items: baseline;
@@ -615,6 +615,7 @@ h4 {
 .menu-bar {
   width: 100%;
   height: 40px;
+  cursor: pointer;
   /* background-color: #c850c0; */
   display: flex;
   align-items: center;
