@@ -15,21 +15,27 @@ body {
 
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(14vw, 1fr));
   gap: 16px;
   padding: 16px;
+  grid-template-rows: repeat(auto-fill, minmax(36vh, 1fr));
+  width: 100vw;
 }
-
+/* .grid-container>a{
+  height: 80%;
+} */
 .grid-item {
   position: relative;
   overflow: hidden;
   border-radius: 8px;
+  height: 100%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .video-container,
 .image-container {
   position: relative;
+  height: 100%;
 }
 
 .video-icon,
@@ -95,7 +101,7 @@ video {
   width: 100%;
   height: 100%;
   display: flex;
-  /* overflow: hidden; */
+  overflow: hidden;
 }
 /* Add this CSS to style the left navigation */
 .navbar {
@@ -103,7 +109,7 @@ video {
   flex-direction: column;
   gap: 10px;
   height: 95vh;
-  width: 245px;
+  width: 225px;
   /* justify-content: space-between; */
   background-color: var(--background-color);
   /* background-color: #2c0707; */
@@ -328,6 +334,7 @@ video {
 .active {
   font-weight: bold !important;
   background-color: rgb(215, 214, 214) !important;
+  border-radius: 1  0px !important;
 }
 
 /* post overlay */
@@ -404,7 +411,6 @@ video {
 .image-preview {
   width: 90%;
   height: 90%;
-  
 }
 .post-img .image-preview img {
   width: 100%;
@@ -415,12 +421,11 @@ video {
 .post-img .vdo-preview {
   width: 90%;
   height: 90%;
-  
 }
 .post-img .vdo-preview video {
   width: 100%;
   height: 100%;
-  object-fit:contain;
+  object-fit: contain;
   object-position: center;
 }
 .upload-cnt {

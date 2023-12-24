@@ -497,12 +497,13 @@ body {
 .profile-follow-image {
   width: 40px;
   height: 40px;
+  border:1px solid #c850c0;
+  border-radius: 50%;
 }
 
 .profile-follow-image img {
   width: 100%;
   border-radius: 50%;
-
   height: 100%;
 }
 
@@ -841,7 +842,8 @@ img {
 video {
   object-fit: cover;
   width: 450px;
-  max-height: 500px;
+  max-height: 480px;
+  border-radius: 5px;
 }
 /* comments */
 
