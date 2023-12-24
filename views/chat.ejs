@@ -5,12 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="../stylesheets/chat.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+      integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"
+    />
     <link
       rel="stylesheet"
       type="text/css"
       href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
     />
-
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
@@ -356,7 +366,7 @@
 
       function updateScroll(time) {
         var element = document.querySelector(".chat-area");
-        element.style.scrollBehavior="smooth"
+        element.style.scrollBehavior = "smooth";
         setTimeout(() => {
           element.scrollTop = element.scrollHeight;
         }, time);
@@ -364,7 +374,7 @@
       document.addEventListener("DOMContentLoaded", () => {
         document
           .querySelector(".left-chat-sec")
-          .addEventListener("click", function (e) {
+          .addEventListener("click", async function (e) {
             updateScroll(600);
             var userId = e.target.getAttribute("data-id");
             var userImg = e.target.getAttribute("data-img");
@@ -375,16 +385,32 @@
             document.querySelector(
               ".right-header"
             ).innerHTML = `<a class="content-chat-header" href="/profile/${userId}">
-       <div class="img">
-        <img src="${userImg}" alt="" />
-      </div>
-      <div class="profile-name">${userName}</div></a>`;
+         <div class="img">
+          <img src="${userImg}" alt="" />
+        </div>
+        <div class="profile-name">${userName}</div></a>`;
+
             receiver_id = userId;
+            senderBlock = false;
+            receiverBlock = false;
 
             document.querySelector(".inbox").style.display = "none";
             document.querySelector(".chat-area").style.display = "block";
             document.querySelector(".right-header").style.display = "flex";
             document.querySelector("#chat-form").style.display = "flex";
+            await axios
+              .get(`/getSender/${sender_id}/${receiver_id}`)
+              .then((res) => {
+                // console.log(res.data.sender.blockedUsers);
+                // console.log(receiver_id);
+                if (res.data.sender.blockedUsers.includes(receiver_id)) {
+                  console.log("blocked");
+                  senderBlock = true;
+                }
+                if (res.data.rec.blockedUsers.includes(sender_id)) {
+                  receiverBlock = true;
+                }
+              });
             socket.emit("existsChat", {
               sender_id: sender_id,
               receiver_id: receiver_id,
@@ -431,21 +457,28 @@
               updateScroll(100);
             }
           },
+          error: function (xhr, status, error) {
+            if (xhr.status === 403) {
+              // console.log(xhr.responseJSON.msg);
+              toastr.error(xhr.responseJSON.msg);
+              $("#message").val("");
+            } else {
+              console.error("Error saving chat:", error);
+            }
+          },
         });
       });
-
       socket.on("loadNewChat", function (data) {
         if (sender_id == data.receiver_id && receiver_id == data.sender_id) {
           let html = `<div class="sender" id="${data._id}">
-      <h6>${data.message.content}</h6>
-    </div>`;
+        <h6>${data.message.content}</h6>
+      </div>`;
           $(".chat-area").append(html);
           updateScroll(100);
         }
       });
 
       socket.on("loadChats", function (data) {
-        
         $(".chat-area").html("");
         var chats = data.chats;
         let html = "";
@@ -459,60 +492,74 @@
               addClass = "sender";
             }
             html += `<div class="${addClass}" id="${i._id}">
-              <h6>${i.message.content}
-                ${
-                  i.sender_id == sender_id
-                    ? `<i
-                      class="ri-delete-bin-7-line"
-                      data-id="${i._id}"
-                      data-toggle="modal"
-                      data-target="#deleteChatModel"
-                    ></i>`
-                    : ""
-                }
-              </h6>  
-            </div>
-            `;
+                <h6>${i.message.content}
+                  ${
+                    i.sender_id == sender_id
+                      ? `<i
+                        class="ri-delete-bin-7-line"
+                        data-id="${i._id}"
+                        data-toggle="modal"
+                        data-target="#deleteChatModel"
+                      ></i>`
+                      : ""
+                  }
+                </h6>
+              </div>
+              `;
           } else if (i.message.messageType === "Post") {
             // Assuming 'file' is a property of the 'content' object in your Post model
             let postContent = i.message.content;
             if (postContent) {
               html += `
-    <a href="/singlepost/${postContent._id}" onmouseover="playVideo(this)"
-          onmouseout="pauseVideo(this)">
-      <div class="${addClass} post-container" id="${i._id}">
-        ${
-          postContent.filetype === "video"
-            ? `<video muted loop src="${postContent.file}"></video>`
-            : `<img src="${postContent.file}" alt="" />`
-        }
-        <div class="overlay-icons">
+      <a href="/singlepost/${postContent._id}" onmouseover="playVideo(this)"
+            onmouseout="pauseVideo(this)">
+        <div class="${addClass} post-container" id="${i._id}">
           ${
             postContent.filetype === "video"
-              ? '<i class="ri-movie-2-line"></i>'
-              : '<i class="fas fa-image"></i>'
+              ? `<video muted loop src="${postContent.file}"></video>`
+              : `<img src="${postContent.file}" alt="" />`
           }
+          <div class="overlay-icons">
+            ${
+              postContent.filetype === "video"
+                ? '<i class="ri-movie-2-line"></i>'
+                : '<i class="fas fa-image"></i>'
+            }
+          </div>
+          <div class="profile-info">
+            <img src="${
+              postContent.author.profile_picture
+            }" alt="Profile Picture">
+            <span>${postContent.author.fullName}</span>
+          </div>
+          <div class="video-overlay">
+          </div>
         </div>
-        <div class="profile-info">
-          <img src="${
-            postContent.author.profile_picture
-          }" alt="Profile Picture">
-          <span>${postContent.author.fullName}</span>
-        </div>
-        <div class="video-overlay">
-        </div>
-      </div>
-    </a>`;
+      </a>`;
             } else {
               html += ` <div class="${addClass}" id="${i._id}" style="background-color: #000;">
-           <i> <h6 style="color: white;">Message unavailable This content may have been deleted by its owner</h6></i>
-          </div>`;
+             <i> <h6 style="color: white;">Message unavailable This content may have been deleted by its owner</h6></i>
+            </div>`;
             }
           }
         });
 
         $(".chat-area").append(html);
-        updateScroll(100)
+        if (receiverBlock) {
+          document.querySelector(".chat-area").innerHTML = `
+            <h1>
+              <b>You are blocked by the Receiver</b>
+            </h1>
+          `;
+        }
+        if (senderBlock) {
+          document.querySelector(".chat-area").innerHTML = `
+            <h1>
+              <b>You blocked this contact</b>
+            </h1>
+          `;
+        }
+        updateScroll(100);
       });
       function playVideo(element) {
         var video = element.querySelector("video");

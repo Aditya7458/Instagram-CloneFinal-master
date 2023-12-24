@@ -308,6 +308,8 @@ router.get("/reels", isLoggedIn, async function (req, res, next) {
 router.get("/posts", isLoggedIn, async function (req, res, next) {
   const user = await userSchema.findOne({ _id: req.user._id });
   const posts = await postSchema.find({}).populate("author");
+  console.log(user, "user");
+  console.log(posts, "post");
   const likesPopulate = await postSchema.find({}).populate("likes");
   res.json({ posts: posts, user: user, likesPopulate: likesPopulate });
 });
@@ -362,6 +364,12 @@ router.get("/follow/:id", isLoggedIn, async (req, res) => {
   if (followUser.followers.indexOf(loggedInUser._id) === -1) {
     followUser.followers.push(loggedInUser._id);
     loggedInUser.following.push(followUser._id);
+    await Notification.insertNotification(
+      followUser._id,
+      req.user._id,
+      "follow",
+      followUser._id
+    );
   } else {
     followUser.followers.splice(
       followUser.followers.indexOf(loggedInUser._id),
@@ -441,10 +449,81 @@ router.get("/gotochat/:id", isLoggedIn, async (req, res, next) => {
     allUser: allUser,
   });
 });
+router.get("/getSender/:id/:rec", isLoggedIn, async function (req, res, next) {
+  const sender = await userSchema.findById(req.params.id);
+  const rec = await userSchema.findById(req.params.rec);
+  res.json({ sender: sender, rec: rec });
+});
+// block user
+router.get("/block/:userId", async function (req, res, next) {
+  try {
+    const currentUser = await userSchema.findById(req.user._id);
+    const userToBlockOrUnblock = await userSchema.findById(req.params.userId);
+    if (!currentUser || !userToBlockOrUnblock) {
+      return res.status(404).json({ success: false, msg: "User not found" });
+    }
+    if (currentUser._id.toString() === userToBlockOrUnblock._id.toString()) {
+      return res.status(400).json({
+        success: false,
+        msg: "You can't block or unblock yourself.",
+      });
+    }
+    const isUserBlocked = currentUser.blockedUsers.includes(
+      userToBlockOrUnblock._id
+    );
+    if (isUserBlocked) {
+      currentUser.blockedUsers = currentUser.blockedUsers.filter(
+        (userId) => userId.toString() !== userToBlockOrUnblock._id.toString()
+      );
+      currentUser.following = currentUser.following.filter(
+        (userId) => userId.toString() !== userToBlockOrUnblock._id.toString()
+      );
+      userToBlockOrUnblock.followers = userToBlockOrUnblock.followers.filter(
+        (userId) => userId.toString() !== currentUser._id.toString()
+      );
+      await Promise.all([currentUser.save(), userToBlockOrUnblock.save()]);
+      res.redirect("back");
+    } else {
+      currentUser.blockedUsers.push(userToBlockOrUnblock._id);
+      currentUser.following = currentUser.following.filter(
+        (userId) => userId.toString() !== userToBlockOrUnblock._id.toString()
+      );
+      userToBlockOrUnblock.followers = userToBlockOrUnblock.followers.filter(
+        (userId) => userId.toString() !== currentUser._id.toString()
+      );
+      await Promise.all([currentUser.save(), userToBlockOrUnblock.save()]);
+      res.redirect("back");
+    }
+  } catch (error) {
+    console.error("Error blocking/unblocking/unfollowing user:", error);
+    res.status(500).json({
+      success: false,
+      msg: "Error blocking/unblocking/unfollowing user",
+      error: error.message,
+    });
+  }
+});
 // save chats
 router.post("/save-chat", async function (req, res, next) {
   console.log("save-chat", req.body);
   try {
+    const sender = await userSchema.findById(req.body.sender_id);
+    const receiver = await userSchema.findById(req.body.receiver_id);
+
+    if (!sender || !receiver) {
+      return res.status(404).json({ success: false, msg: "User not found" });
+    }
+    if (sender.blockedUsers.includes(receiver._id)) {
+      return res
+        .status(403)
+        .json({ success: false, msg: "You Blocked This Contact" });
+    }
+
+    if (receiver.blockedUsers.includes(sender._id)) {
+      return res
+        .status(403)
+        .json({ success: false, msg: "You are blocked by the receiver" });
+    }
     var chat = new Chat({
       sender_id: req.body.sender_id,
       receiver_id: req.body.receiver_id,
@@ -454,7 +533,7 @@ router.post("/save-chat", async function (req, res, next) {
       },
     });
 
-    console.log("chat", chat);
+    // console.log("chat", chat);
 
     var newChat = await chat.save();
     res

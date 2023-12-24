@@ -154,8 +154,9 @@
 
       <div class="notification" id="notification">
         <h2>Notifications</h2>
-        <% noti.reverse().forEach((i)=>{%> <% if(i.notificationType == "like"){
-        %>
+        <% noti.reverse().forEach((i)=>{%>
+        <%if(i.userFrom._id.toString()!=i.userTo._id.toString()){ %>
+        <%if(i.notificationType == "like"){ %>
         <div class="notification-list">
           <a href="/singlepost/<%=i.entityId %>" class="notification-item">
             <div class="user-avatar">
@@ -170,7 +171,24 @@
             </div>
           </a>
         </div>
-        <%}%> <%if(i.notificationType == "comment"){%>
+        <%}%>
+        <%if(i.notificationType == "follow"){ %>
+        <div class="notification-list">
+          <a href="/profile/<%=i.userFrom._id%>" class="notification-item">
+            <div class="user-avatar">
+              <img src="<%=i.userFrom.profile_picture %>" alt="User Avatar" />
+            </div>
+            <div class="notification-content">
+              <p>
+                <span class="username"><%= i.userFrom.fullName %></span> started
+                follow you.
+              </p>
+              <span class="timestamp"><%=timeAgo(i.time)%></span>
+            </div>
+          </a>
+        </div>
+        <%}%>
+         <%if(i.notificationType == "comment"){%>
         <div class="notification-list">
           <a href="/singlepost/<%= i.entityId %>" class="notification-item">
             <div class="user-avatar">
@@ -185,7 +203,7 @@
             </div>
           </a>
         </div>
-        <%}%> <%}) %>
+        <%}%> <%}%> <%}) %>
       </div>
 
       <div class="share-menu">
@@ -384,7 +402,6 @@
                 </div>
                 <div class="profile-follow-content">
                   <p class="profile-id"><%= user.fullName %></p>
-                  <!-- <p class="profile-name">Aaasu Yadav</p> -->
                 </div>
               </div>
             </a>

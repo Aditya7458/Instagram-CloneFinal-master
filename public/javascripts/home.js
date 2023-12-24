@@ -121,67 +121,69 @@ const handle = (data, user) => {
   temp = "";
   data.reverse().forEach((e) => {
     // console.log(like[index]);
-    temp += `<div  class="post-main" >
-              <div class="post-header">
-                <div class="post-left-header">  
-                  <div class="post-image"  onclick="openStory('${
-                    e.author._id
-                  }')">
-                    <img src="${e.author.profile_picture}" alt="" />
+    if (!(user.blockedUsers.includes(e.author._id) || e.author.blockedUsers.includes(user._id))) {
+      temp += `<div  class="post-main" >
+                <div class="post-header">
+                  <div class="post-left-header">  
+                    <div class="post-image"  onclick="openStory('${
+                      e.author._id
+                    }')">
+                      <img src="${e.author.profile_picture}" alt="" />
+                    </div>
+                    <a href="/profile/${e.author._id} "
+                      ><p class="post-username">${e.author.fullName}</p></a
+                    >
+                    <i class="fa-solid fa-certificate"></i>
+                    <span class="one-day"
+                      > ${
+                        timeAgo(e.time) ? timeAgo(e.time) : "1 second ago"
+                      } </span
+                    >
                   </div>
-                  <a href="/profile/${e.author._id} "
-                    ><p class="post-username">${e.author.fullName}</p></a
-                  >
-                  <i class="fa-solid fa-certificate"></i>
-                  <span class="one-day"
-                    > ${
-                      timeAgo(e.time) ? timeAgo(e.time) : "1 second ago"
-                    } </span
-                  >
+                  <i class="fa-solid fa-grip-lines" id="${e._id}"></i>
                 </div>
-                <i class="fa-solid fa-grip-lines" id="${e._id}"></i>
-              </div>
-              <div class="post-main-image">
-                ${
-                  e.filetype == "video"
-                    ? `<a href="/singlepost/${e._id}">
-                    <video class="feeds" controls loop src="${e.file}"></video> 
-                    </a>`
-                    : `<a href="/singlepost/${e._id}">
-                      <img class="feeds" src="${e.file}" alt="" />
-                    </a>`
-                }
-              </div>
-              <div class="post-fotter">
-                <div class="post-fotter-left">
+                <div class="post-main-image">
                   ${
-                    e.likes.includes(user._id)
-                      ? `<i class="fa-solid fa-heart like " style="color: red;" id="${e._id}"></i>`
-                      : `<i class="fa-regular fa-heart like" id="${e._id}"></i>`
+                    e.filetype == "video"
+                      ? `<a href="/singlepost/${e._id}">
+                      <video class="feeds" controls loop src="${e.file}"></video> 
+                      </a>`
+                      : `<a href="/singlepost/${e._id}">
+                        <img class="feeds" src="${e.file}" alt="" />
+                      </a>`
                   }
-                  <i class="fa-regular fa-message comment " id=${e._id}></i>
-                  <i class="fa-regular fa-paper-plane" id=${e._id}></i>
                 </div>
-                ${
-                  user.bookmarks.includes(e._id)
-                    ? ` <i class="fa-solid fa-bookmark" id="${e._id}"></i>`
-                    : `<i class="fa-regular fa-bookmark" id="${e._id}"></i>`
-                }
-              </div>
-              <div class="post-description">
-                <p class="post-liked">Liked by <b>${
-                  e.likes.length
-                }</b> people</p>
-                <p class="title">
-                  <span>${e.title} </span>
-                </p>
-                <a href="/singlepost/${e._id}">
-                  <p class="comments">view all ${
-                    e.comments.length
-                  } comments</p> 
-                </a>
-              </div>
-            </div>`;
+                <div class="post-fotter">
+                  <div class="post-fotter-left">
+                    ${
+                      e.likes.includes(user._id)
+                        ? `<i class="fa-solid fa-heart like " style="color: red;" id="${e._id}"></i>`
+                        : `<i class="fa-regular fa-heart like" id="${e._id}"></i>`
+                    }
+                    <i class="fa-regular fa-message comment " id=${e._id}></i>
+                    <i class="fa-regular fa-paper-plane" id=${e._id}></i>
+                  </div>
+                  ${
+                    user.bookmarks.includes(e._id)
+                      ? ` <i class="fa-solid fa-bookmark" id="${e._id}"></i>`
+                      : `<i class="fa-regular fa-bookmark" id="${e._id}"></i>`
+                  }
+                </div>
+                <div class="post-description">
+                  <p class="post-liked">Liked by <b>${
+                    e.likes.length
+                  }</b> people</p>
+                  <p class="title">
+                    <span>${e.title} </span>
+                  </p>
+                  <a href="/singlepost/${e._id}">
+                    <p class="comments">view all ${
+                      e.comments.length
+                    } comments</p> 
+                  </a>
+                </div>
+              </div>`;
+    }
   });
   post_area.innerHTML = temp;
 };
@@ -817,7 +819,7 @@ fetchStories();
 var middle = document.querySelector(".middle-section");
 middle.addEventListener("click", (e) => {
   document.querySelector(".search-card").style.left = "-600px";
-  document.querySelector(".search-btn").classList.remove("active")
+  document.querySelector(".search-btn").classList.remove("active");
   document.querySelector(".notification-btn").classList.remove("active");
   document.querySelector(".home-btn").classList.add("active");
   document.querySelector(".main").style.position = "initial";
@@ -826,7 +828,7 @@ middle.addEventListener("click", (e) => {
 });
 var follow = document.querySelector(".follow-section");
 follow.addEventListener("click", (e) => {
-  document.querySelector(".search-btn").classList.remove("active")
+  document.querySelector(".search-btn").classList.remove("active");
   document.querySelector(".home-btn").classList.add("active");
   document.querySelector(".notification-btn").classList.remove("active");
   document.querySelector(".search-card").style.left = "-600px";

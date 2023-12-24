@@ -533,3 +533,11 @@ video {
   font-weight: 600 !important;
   color: #fff;
 }
+.profile_block button{
+  background-color: #f60000e0;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600 !important;
+  color: #fff;
+}
