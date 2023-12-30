@@ -260,7 +260,8 @@ router.get("/profile/:id", isLoggedIn, async function (req, res, next) {
     .populate("bookmarks");
   const user = await userSchema
     .findById(req.params.id)
-    .populate("followers posts");
+    .populate("followers posts")
+    .populate("following");
   const loggedInUser = await userSchema.findById(req.user._id);
   res.render("profile", {
     user: user,
@@ -356,7 +357,27 @@ router.get("/post/:id", isLoggedIn, async (req, res) => {
   ]);
   res.json({ post: post, user: user, singlePost: singlePost });
 });
-// followers
+// remove followers
+router.get("/remove-follow/:id", isLoggedIn, async (req, res) => {
+  const followerRemove = req.params.id;
+  const loggedInUser = await userSchema.findOne({ _id: req.user._id });
+  try {
+    await userSchema.findByIdAndUpdate(loggedInUser._id, {
+      $pull: {
+        followers: followerRemove,
+      },
+    });
+    await userSchema.findByIdAndUpdate(followerRemove, {
+      $pull: {
+        following: loggedInUser._id,
+      },
+    });
+    res.redirect(req.header("referer"));
+  } catch (error) {
+    console.log(error)
+  }
+});
+// follow Unfollow
 router.get("/follow/:id", isLoggedIn, async (req, res) => {
   const followUser = await userSchema.findOne({ _id: req.params.id });
   const loggedInUser = await userSchema.findOne({ _id: req.user._id });

@@ -18,6 +18,66 @@
     <title>Document</title>
   </head>
   <body>
+    <!-- followers overlay -->
+    <div class="share-overlay2">
+      <div class="upload-form2">
+        <div id="popup-container">
+          <div class="cross1" id="close-button">❌</div>
+          <span style="margin-left: 106px"><b>Followers</b></span>
+          <% user.followers.forEach(e=>{%>
+            <% if(e._id.toString()!=loggedInUser._id.toString() && e._id.toString()!= user._id.toString()){%>
+                <div class="user-list">
+            <div class="img-name-container">
+              <div class="profile-img">
+                <img src="<%=e.profile_picture%>" alt="" />
+              </div>
+              <div class="profile-name">
+                <h3><%=e.fullName%></h3>
+              </div>
+            </div>
+            <% if(loggedInUser._id.toString() == user._id.toString()){ %>
+            <a href="/remove-follow/<%=e._id %>" id="" class="send-button">Remove</a>
+            <% }else{ %>
+              <% if(e.followers.includes(loggedInUser._id)){ %>
+              <a href="/follow/<%=e._id %>" id="" class="send-button">Following</a>
+            <% }else{ %>
+                <a href="/follow/<%=e._id %>" id="" class="send-button">Follow</a>
+            <%  } %>
+            <%} %>
+          </div>
+           <% } %>
+          <%}) %>
+        </div>
+      </div>
+    </div>
+    <!-- following -->
+    <div class="share-overlay1">
+      <div class="upload-form1">
+        <div id="popup-container1">
+          <div class="cross11" id="close-button1">❌</div>
+          <span style="margin-left: 106px"><b>Following</b></span>
+          <% user.following.forEach(e => { %>
+          <div class="user-list1">
+            <a href="/profile/<%=e._id%>" class="img-name-container1">
+              <div class="profile-img1">
+                <img src="<%=e.profile_picture%>" alt="" />
+              </div>
+              <div class="profile-name1">
+                <h3><%=e.fullName%></h3>
+              </div>
+            </a>
+            <% if(!(e._id.toString()==loggedInUser._id.toString())){ %>
+              <% if(e.followers.includes(loggedInUser._id)){ %>
+              <a href="/follow/<%=e._id %>" id="" class="send-button">Following</a>
+            <% }else{ %>
+                <a href="/follow/<%=e._id %>" id="" class="send-button">Follow</a>
+            <%  } %>   
+            <% } %> 
+          </div>
+          <%}); %>
+        </div>
+      </div>
+    </div>
     <div class="popup-overlay">
       <div class="popup">
         <div class="popup-header">
@@ -152,23 +212,32 @@
               %>
               <i class="ri-settings-2-line"></i>
               <% }else{ %>
-                <a href="/gotochat/<%=user._id%>" class="profile_msg"><button id="<%=user._id%>">Message</button></a>
-                <%if(loggedInUser.blockedUsers.includes(user._id)){ %>
-                  <a href="/block/<%=user._id%>" class="profile_block"><button id="<%=user._id%>">Unblock</button></a>
-                <%}else{ %>
-                  <a href="/block/<%=user._id%>" class="profile_block"><button id="<%=user._id%>">Block</button></a>
-                <%}%>
-                <% } %>
+              <a href="/gotochat/<%=user._id%>" class="profile_msg"
+                ><button id="<%=user._id%>">Message</button></a
+              >
+              <%if(loggedInUser.blockedUsers.includes(user._id)){ %>
+              <a href="/block/<%=user._id%>" class="profile_block"
+                ><button id="<%=user._id%>">Unblock</button></a
+              >
+              <%}else{ %>
+              <a href="/block/<%=user._id%>" class="profile_block"
+                ><button id="<%=user._id%>">Block</button></a
+              >
+              <%}%> <% } %>
             </div>
             <div class="profile_stats">
               <h4><%= user.posts.length%>&nbsp;Posts</h4>
-              <h4><%=followUser.followers.length %>&nbsp;Followers</h4>
-              <h4><%=followUser.following.length %>&nbsp; Following</h4>
+              <h4 class="followers-popup">
+                <%=followUser.followers.length %>&nbsp;Followers
+              </h4>
+              <h4 class="following-popup">
+                <%=followUser.following.length %>&nbsp; Following
+              </h4>
             </div>
             <div class="profile_bio">
               <h6 class="profile-real-bio"><%= user.bio %></h6>
             </div>
-            <a href="https://<%=user.links%>"target="_blank" class="links">
+            <a href="https://<%=user.links%>" target="_blank" class="links">
               <h6 class="profile-real-links"><%= user.links %></h6>
             </a>
           </div>
@@ -176,11 +245,11 @@
         <div class="profile__section">
           <div class="container">
             <%if(loggedInUser.blockedUsers.includes(user._id)){%>
-              <h1>This user is blocked by you</h1>
+            <h1>This user is blocked by you</h1>
             <%}else if(user.blockedUsers.includes(loggedInUser._id)){ %>
-              <h1>You were blocked by this user</h1>
-           <% }else{%>
-                <div class="profile__section__tab">
+            <h1>You were blocked by this user</h1>
+            <% }else{%>
+            <div class="profile__section__tab">
               <button
                 class="tablinks"
                 onclick="openSection(event, 'Posts')"

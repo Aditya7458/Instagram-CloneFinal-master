@@ -37,6 +37,37 @@
 // }
 // saveedit.addEventListener("click", Saveedit);
 
+// follow & followers
+document.querySelector(".followers-popup").addEventListener("click", () => {
+  document.querySelector(".share-overlay2").style.display = "block";
+});
+document.querySelector(".following-popup").addEventListener("click", () => {
+  document.querySelector(".share-overlay1").style.display = "block";
+});
+document.querySelector(".share-overlay2").addEventListener("click", (e) => {
+  console.log(e.target);
+  if (
+    e.target.classList.contains("share-overlay2") ||
+    e.target.classList.contains("cross1")
+  ) {
+    document.querySelector(".share-overlay2").style.display = "none";
+    document.querySelector(".share-overlay2").style.transition = "all ease .5s";
+  }
+});
+document.querySelector(".share-overlay1").addEventListener("click", (e) => {
+  console.log(e.target);
+  if (
+    e.target.classList.contains("share-overlay1") ||
+    e.target.classList.contains("cross11")
+  ) {
+    document.querySelector(".share-overlay1").style.display = "none";
+    document.querySelector(".share-overlay1").style.transition = "all ease .5s";
+  }
+});
+// function closePopup() {
+//   var popupContainer = document.querySelector(".share-overlay");
+//   popupContainer.style.display = "none";
+// }
 
 
 var editBtn = document.querySelector(".profile-edit-btn");
@@ -208,3 +239,4 @@ function openSection(evt, tabName) {
 
 // Get the element with id="defaultOpen" and click on it
 document.getElementById("defaultOpen").click();
+
