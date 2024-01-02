@@ -348,11 +348,14 @@ const menuHandler = async (postId) => {
     ) {
       postMenu.style.display = "none";
       postMenu.style.transition = "all ease .5s";
+      postMenu.removeEventListener("click", menuClickHandler);
     } else if (e.target.classList.contains("goto")) {
       window.location.href = `/singlepost/${postId}`;
+      postMenu.removeEventListener("click", menuClickHandler);
     } else if (e.target.classList.contains("about-account")) {
       const res = await axios.get(`/post/${postId}`);
       window.location.href = `/profile/${res.data.post.author._id}`;
+      postMenu.removeEventListener("click", menuClickHandler);
     } else if (e.target.classList.contains("delete")) {
       // console.log("hello");
       const res = await axios.get(`/deletepost/${postId}`);
@@ -362,14 +365,17 @@ const menuHandler = async (postId) => {
         loadPosts();
         toastr.success(res.data.message);
       }
+      postMenu.removeEventListener("click", menuClickHandler);
     } else if (e.target.classList.contains("copy")) {
       const res = await axios.get(`/cpy-link/${postId}`);
       if (res.data.success) {
         toastr.success("link copied to clipboard");
         postMenu.style.display = "none";
       }
+      postMenu.removeEventListener("click", menuClickHandler);
     }
-    postMenu.removeEventListener("click", menuClickHandler);
+
+    
   }
 };
 ``;
