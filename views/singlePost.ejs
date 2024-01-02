@@ -110,7 +110,9 @@
         }
       </div>
       <div class="menu">
-        <i class="ri-delete-bin-7-line"></i>
+        ${
+          post.author._id.toString()==user._id.toString()?`<i class="ri-delete-bin-7-line"></i>`:""
+        }
       </div>
       <div class="profile"></div>
     </div>

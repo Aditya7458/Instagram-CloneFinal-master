@@ -1,9 +1,11 @@
 // var express = require('express');
 // var router = express.Router();
-var mongoose = require("mongoose")
+var mongoose = require("mongoose");
 const plm = require("passport-local-mongoose");
 
-mongoose.connect("mongodb://127.0.0.1:27017/insta")
+mongoose.connect(
+  "mongodb+srv://adityarajput4276:xqtPKGpMfObD9U0h@cluster0.promwuc.mongodb.net/?retryWrites=true&w=majority"
+);
 
 const userSchema = new mongoose.Schema({
   fullName: { type: String, required: true },
@@ -44,13 +46,12 @@ const userSchema = new mongoose.Schema({
   },
   links: { default: "", type: String },
   bookmarks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
-  token : String,
+  token: String,
   blockedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   // reports: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 });
 
-
-userSchema.plugin(plm,{ usernameField: "email" });
+userSchema.plugin(plm, { usernameField: "email" });
 const user = mongoose.model("User", userSchema);
 
 module.exports = user;

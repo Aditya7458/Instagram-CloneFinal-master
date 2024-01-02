@@ -876,3 +876,7 @@ img {
 .post-container:hover .video-overlay {
   opacity: 0.5;
 }
+.delete_post{
+  z-index: 9999;
+  cursor: pointer;
+}
